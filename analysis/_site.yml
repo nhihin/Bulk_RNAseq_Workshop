@@ -1,7 +1,7 @@
-name: "Bulk_RNAseq"
+name: Bulk_RNAseq
 output_dir: ../docs
 navbar:
-  title: "Bulk_RNAseq"
+  title: Bulk_RNAseq
   left:
   - text: Home
     href: index.html
@@ -9,6 +9,10 @@ navbar:
     href: about.html
   - text: License
     href: license.html
+  right:
+  - icon: fa-github
+    text: Source code
+    href: https://github.com/nhihin/Bulk_RNAseq
 output:
   workflowr::wflow_html:
     toc: yes
