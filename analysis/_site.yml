@@ -1,21 +1,17 @@
-name: Bulk_RNAseq
+name: RNAseq_Workshop
 output_dir: ../docs
 navbar:
-  title: Bulk_RNAseq
+  title: Bulk RNA-seq
   left:
-  - text: Home
+  - text: Introduction
     href: index.html
-  - text: About
-    href: about.html
-  - text: License
-    href: license.html
-  right:
-  - icon: fa-github
-    text: Source code
-    href: https://github.com/nhihin/Bulk_RNAseq
+  - text: Setting Up
+    href: processing.html
+  - text: Differential Gene Expression Analysis
+    href: de.html
 output:
   workflowr::wflow_html:
     toc: yes
     toc_float: yes
-    theme: cosmo
+    theme: journal
     highlight: textmate
