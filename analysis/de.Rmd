@@ -1,0 +1,426 @@
+---
+title: "Differential Gene Expression Analysis"
+author: "Nhi Hin"
+date: "2021-06-28"
+output: workflowr::wflow_html
+editor_options:
+  chunk_output_type: console
+---
+
+
+```{r include=FALSE, warning=FALSE, error=FALSE}
+# Working with data:
+library(dplyr)
+library(magrittr)
+library(readr)
+library(tibble)
+library(reshape2)
+
+# Visualisation:
+library(kableExtra)
+library(ggplot2)
+library(ggbiplot)
+library(ggrepel)
+library(grid)
+library(cowplot)
+# Set ggplot2 theme
+theme_set(theme_bw())
+
+# Other packages:
+library(here)
+library(export)
+
+# Bioconductor packages:
+library(AnnotationHub)
+library(edgeR)
+library(limma)
+library(Glimma)
+library(clusterProfiler)
+library(org.Hs.eg.db)
+library(enrichplot)
+```
+
+
+
+## Summary
+
+- On this page, we will perform differential gene expression analysis to identify genes that show significant differential expression between `Covid19` and `Healthy` samples. The steps involved are:
+
+1. Importing in the `DGEList` object prepared in the [Setting Up](processing.html) page. 
+
+2. Filtering of low expressed genes to increase our power to detect differentially expressed genes.
+
+3. Identifying differentially expressed genes using the *limma* package.
+
+4. Visualisation of differentially expressed genes using volcano plots and boxplots. 
+
+5. GO enrichment analysis of differentially expressed genes to explore their biological significance, including network plot visualisation. 
+
+## Import Data
+
+- Below, we are importing in an object called `dge`, which was prepared in the [Setting Up](processing.html) page. This object contains: gene counts, sample metadata, and gene annotations. Unfortunately we don't have time to cover this in detail, but please at least skim through the [Setting Up](processing.html) page to understand how we have imported the data in and gotten it into this format. 
+
+```{r}
+dge <- readRDS(here("data", "R", "dge.rds"))
+```
+
+- To quickly summarise, the gene counts in the `dge` object can be accessed using `dge$counts`, and we can preview the first 5 rows and columns as follows. Each row represents one gene and the columns represent different samples. 
+
+```{r}
+dge$counts[1:5,1:5]
+```
+
+- The sample metadata in the `dge` object can be accessed using `dge$samples`, and we can preview the first 5 rows and columns as follows. Each row represents one sample and the columns represent information/characteristics about the samples. 
+
+```{r}
+dge$samples[1:5,1:5]
+```
+
+- Lastly, the gene metadata in the `dge` object can be accessed using `dge$genes`, and we can preview the first 5 rows and columns as follows. Each row represents one gene and the columns represent information about that gene.
+
+```{r}
+dge$genes[1:5,1:5]
+```
+
+- To understand the contents of these objects better, try viewing them using the `View()` function, i.e. `View(dge$genes)` or `View(dge$samples)`. 
+
+- The `nrow()` and `ncol()` functions can be used to know the number of rows and columns in these objects, e.g.
+
+```{r}
+nrow(dge$samples) # Number of samples
+```
+
+### Questions
+
+1. How many samples in total are in this dataset? How many Healthy/Covid19 samples are there?
+2. How many genes are in this dataset?
+
+## Filtering of low-expressed genes
+
+- Filtering of low-expressed genes is a standard step in differential gene expression analysis as it helps to increase the power we have to detect differentially expressed genes, by not having to consider those which are expressed at levels too low to be reliable. Please refer to [this paper](https://www.ncbi.nlm.nih.gov/pmc/articles/PMC4983442/) for more background reading. 
+
+- The cutoff for filtering out low-expressed genes is somewhat arbitrary, and we can decide through plotting density plots like the ones below. Ideally, the filtering should remove the large peak of genes with low expression towards the left of the density plot. 
+
+- A common guideline is to filter so that we retain genes expressed **at least 1 cpm in the smallest group of samples**. Here, the smallest group of samples is 10 (we have 10 Healthy samples and 44 Covid-19 samples). 
+
+- By setting the expression cutoff to **1 cpm in at least 10 samples** below, we can see that the peak corresponding to low-expressed genes is successfully largely reduced in the data after filtering. 
+
+```{r warning=FALSE, fig.width=11}
+keepTheseGenes <- (rowSums(cpm(dge) > 1) >= 10) 
+
+beforeFiltering_plot <- dge %>% 
+  cpm(log = TRUE) %>% 
+  melt %>% 
+  dplyr::filter(is.finite(value)) %>% 
+  ggplot(aes(x = value, colour = Var2)) +
+  geom_density() + 
+  guides(colour = FALSE) +
+  ggtitle("A. Before filtering") +
+  labs(x = "logCPM", y = "Density")
+
+afterFiltering_plot <- dge %>% 
+  cpm(log = TRUE) %>% 
+  magrittr::extract(keepTheseGenes,) %>%
+  melt %>% 
+  dplyr::filter(is.finite(value)) %>% 
+  ggplot(aes(x = value, colour = Var2)) +
+  geom_density() + 
+  guides(colour = FALSE) +
+  ggtitle("B. After filtering")+
+  labs(x = "logCPM", y = "Density")
+
+cowplot::plot_grid(beforeFiltering_plot, afterFiltering_plot)
+```
+
+- Using this threshold, the step below filters out `r table(keepTheseGenes)[[1]]` genes from the original `r length(keepTheseGenes)` genes, giving the remaining `r table(keepTheseGenes)[[2]]` to be used in the analysis. 
+
+```{r}
+dge <- dge[keepTheseGenes,,keep.lib.sizes = FALSE] 
+```
+
+
+## Differential Gene Expression Analysis
+
+- The aim of differential gene expression analysis is to find genes which are expressed significantly differently in one group compared to another. To determine significance, the method we are using (*limma-voom*) uses a moderated *t*-statistic which can be thought of as determining significance similarly to a *t*-test, but with greater power than a *t*-test when applied to gene expression data. This is largely due to the ability to "borrow information" across genes for a gene expression dataset (using Bayesian statistics). 
+
+- Here, the null hypothesis for each gene that a gene is not significantly different due to `group` (i.e. whether a sample is `Covid19` or `Healthy`). The *limma-voom* moderated *t*-test will then give a *p*-value that can be used to assign statistical significance to whether genes are significantly differentially expressed between `Covid19` and `Healthy` samples. 
+
+- Please refer to the papers by [Ritchie et al. 2015](https://www.ncbi.nlm.nih.gov/pmc/articles/PMC4402510/) and [Law et al. 2014](https://genomebiology.biomedcentral.com/articles/10.1186/gb-2014-15-2-r29) for more details about the *limma* and *voom* methods respectively. 
+
+### Specify Design Matrix
+
+- The first step is to set up the design matrix, which specifies the samples involved in the analysis and which groups they belong to. We use the groups stored in `samples$group`, which contains the following: 
+
+```{r}
+dge$samples$group
+```
+
+- The design matrix is specified using the `model.matrix` function as follows. By previewing the design matrix, we can see that there are 2 groups that have been specified, `groupCovid19` and `groupHealthy`. Each row in the design matrix is a sample, and a 0 or 1 indicates which group the sample belongs to. 
+
+```{r}
+design <- model.matrix(~0 + group, data = dge$samples)
+design
+```
+
+### Apply voom transformation
+
+- The *voom* transformation is applied to the gene count data, transforming the discrete counts into log2-counts per million (logCPM). This also estimates the mean-variance relationship and uses this to compute appropriate observation-level weights (genes). After running `voom`, the data will then be ready for linear modelling. 
+
+```{r}
+voomData <- voom(dge, design = design, plot = TRUE)
+```
+
+### Define Comparison (Contrast) of interest
+
+- Here we define the Contrasts matrix, which contains the pairwise comparisons which we wish to test. 
+
+- In this experiment, we are interested in the changes in `groupCovid19` relative to `groupHealthy`, so we will specify this as `groupCovid19 - groupHealthy`. 
+
+```{r}
+contrasts <- makeContrasts(
+  levels = colnames(design),
+  covid_vs_healthy = groupCovid19 - groupHealthy
+)
+
+contrasts
+```
+
+### Fit linear model for each gene
+
+- A linear model is now fitted for each gene, using the `voomData` logCPM for each gene, the design containing the experimental design, and the contrasts which specify the pairwise comparisons to be tested.
+
+- The `treat` step applies Bayesian statistics to "borrow" information across the individual moderated *t*-tests for each gene, increasing our power to detect differentially expressed genes. In this particular experiment, we will require genes to have an absolute log2 fold change greater than 1 (fold change < -2 or > 2) to be considered differentially expressed. 
+
+```{r}
+fit <- lmFit(voomData, design) %>%
+  contrasts.fit(contrasts) %>%
+  treat(lfc = 1)
+```
+
+### Identifying differentially expressed genes
+
+- Multiple testing correction is required every time we are performing multiple hypothesis tests, to minimise the amount of false positives we get. Please see [this pdf](https://physiology.med.cornell.edu/people/banfelder/qbio/resources_2008/1.5_GenespringMTC.pdf) for background reading. 
+
+- In this analysis, we will use the False Discovery Rate (FDR) method to perform multiple testing correction, and set the significance cutoff at 0.05. This means that only genes with FDR-adjusted *p*-values < 0.05 AND absolute log2 fold change of 1 or above will be considered **significantly differentially expressed**. 
+
+```{r}
+results <- decideTests(fit, 
+                       p.value = 0.05,
+                       adjust.method = "fdr") 
+```
+
+- The number of significant differentially expressed genes detected are shown below. Overall, we get good numbers of DE genes for the comparison between **Covid19** and **Healthy**. In the table below, `Up` refers to genes with increased expression in `Covid19` relative to `Healthy` while `Down` refers to genes with decreased expression in `Covid19` relative to `Healthy`.
+
+```{r}
+summary(results)
+```
+
+### Questions
+
+3. How does the number of significant differentially expressed genes change if the log2 fold change is `2`? What about if there is no log2 fold change cutoff? 
+
+## Results
+
+- The differentially expressed genes from the *limma-voom* analysis above can be obtained using the `topTreat` function from *limma*. This gives us a spreadsheet-like table where each row is a gene and the columns contain information including the *p*-value (`P.Value`), FDR-adjusted *p*-value (`adj.P.Val`), *t*-statistic (`t`), log2 fold change (`logFC`) and more. To view the full table, use `View(allDEresults)` to understand how the results look at this stage. 
+
+```{r}
+allDEresults <- topTreat(fit, 
+                         coef = "covid_vs_healthy", 
+                         number = Inf, 
+                         adjust.method = "fdr") %>%
+  as.data.frame() 
+```
+
+- We can filter the `allDEresults` table to just have the ones which we define to be significantly differentially expressed. In this case, significant differential expression means that genes must have FDR-adjusted *p*-value < 0.05 and absolute log2 fold change greater than 1 (i.e. either logFC < -1 or logFC > 1). 
+
+```{r}
+allDEresults <- allDEresults %>%
+  dplyr::mutate(isSignificant = case_when(
+    adj.P.Val < 0.05 & abs(logFC) > 1 ~ TRUE, 
+    TRUE ~ FALSE # If conditions in the line above are not met, gene is not DE. 
+  ))
+
+sigDEresults <- allDEresults %>%
+  dplyr::filter(isSignificant == TRUE)
+```
+
+- We will export those two tables above into the `output` folder as CSV spreadsheets (this is useful for sharing data with collaborators):
+
+```{r}
+allDEresults %>% 
+  dplyr::select(-entrezid) %>%
+  readr::write_csv(here("output", "all_DE_results.csv"))
+
+sigDEresults %>%
+  dplyr::select(-entrezid) %>%
+  readr::write_csv(here("output", "significant_DE_genes.csv"))
+```
+
+- A preview of some of the significant differentially expressed genes are shown below. The full table can be viewed using  `View(sigDEresults)` or by navigating to the `output/significant_DE_genes.csv` file. 
+
+```{r}
+sigDEresults %>% 
+  head(50) %>%
+  kable %>%
+  kable_styling() %>%
+  scroll_box(height="700px")
+```
+
+
+## Visualisation
+
+- Visualisation is an important aspect of doing any analysis and helps us to understand the results. In this section, I will go through using volcano plots and boxplots for visualising the results of differential gene expression analysis. 
+
+### Volcano Plot
+
+- A Volcano Plot is useful for getting a global, broad perspective on the results of the differential gene expression analysis. It communicates how many genes were significant, and the log2 fold changes they tend to have. 
+
+- In a Volcano Plot, each point on the plot represents one gene. The y-axis represents the *p*-value of a gene (we use a log scale for visualisation purposes) and the x-axis represents the log2 fold change of a gene. Genes which are more towards the upper edges of the plot show the most significant differences between `Covid19` and `Healthy` samples and they are the ones we'd be interested in if we were looking to identify potential biomarkers.
+
+```{r}
+volcano_plot <- allDEresults %>%
+  ggplot(aes(x = logFC, 
+             y = -log10(P.Value),
+             colour = isSignificant)) +
+  geom_point(size = 1, alpha = 0.5) +
+  scale_colour_manual(values = c("grey", "red")) +
+  ggtitle("Differential gene expression results")
+
+volcano_plot
+volcano_plot %>% export::graph2pdf(here("output", "volcano_plot.pdf"))
+```
+
+### Interactive Volcano Plot
+
+- We can also make an interactive Volcano Plot to make it easier to pick out genes of interest. The below code will make an interactive Volcano Plot which can be accessed by clicking the "XY-Plot.html" file in the "glimma-plots" folder (or click [here](assets/glimma-plots/XY-Plot.html)).
+
+```{r}
+anno <- data.frame(GeneID = dge$genes$gene, 
+                   Biotype = dge$genes$gene_biotype,
+                   Description = dge$genes$description, 
+                   FDR_PValue = allDEresults$adj.P.Val,
+                   row.names = rownames(dge))
+
+glXYPlot(allDEresults$logFC,
+         -log10(allDEresults$P.Value),
+         xlab="logFC",
+         ylab="-log(raw p-value)",
+         status=as.numeric(allDEresults$adj.P.Val <= 0.05), anno = anno)
+```
+
+
+### Boxplot
+
+- Sometimes, it is useful to look at the expression of individual genes and how they differ between groups. This is especially useful for looking at genes of interest identified using the Volcano Plot, or for looking at the expression of genes which were previously found in a previous experiment to have biological significance. 
+
+**In the [original paper](https://www.cell.com/iscience/pdf/S2589-0042(21)00679-9.pdf) where this dataset was from, CD177 was found to be differentially expressed in their analysis, and a marker of disease severity in the patients from where these samples were derived.**
+
+#### Questions
+
+4. What is the log2 fold change (`logFC`) of the *CD177* gene in the `Covid19` samples relative to `Healthy` samples in our current analysis? How can this value be converted into fold change? 
+5. What is the p-value and FDR-adjusted p-value for the *CD177* gene in our current analysis?
+6. Is *CD177* significantly differentially expressed between Covid-19 patients and healthy patients in our current analysis of the dataset? 
+
+- A boxplot of the *CD177* gene can be produced using the code below. 
+
+```{r}
+# Extract out the logCPM expression of CD177 from the `dge` object:
+expressionOfCD177 <- dge %>% 
+  cpm(log = TRUE) %>%
+  as.data.frame %>%
+  rownames_to_column("gene") %>%
+  dplyr::filter(gene == "CD177") %>%
+  melt() %>%
+  set_colnames(c("gene", "sample", "logCPM"))
+
+# Add sample metadata information so that we can 
+# use the `group` column in dge$samples for plotting. 
+expressionOfCD177 <- expressionOfCD177 %>%
+  left_join(dge$samples, by = "sample")
+
+# Plot boxplots of the logCPM expression of CD177 
+# for each group (Healthy and Covid19):
+expressionOfCD177 %>%
+  ggplot(aes(x = group, y = logCPM, fill = group)) +
+  geom_boxplot() +
+  theme(aspect.ratio = 1) +
+  ggtitle("Expression of CD177 gene")
+```
+
+#### Questions
+
+7. What can we say about the expression of *CD177* in the `Covid19` samples? Do you think *CD177* is suitable as a biomarker for `Covid19` samples relative to `Healthy` samples?
+
+## Gene Ontology (GO) Enrichment Analysis
+
+- After getting the genes showing significant differential expression, the next step is interpreting these results in terms of their biological significance. 
+
+- Gene Ontology (GO) terms can help with this. We don't have enough time to go into the details of what GO is, but please see the [Wikipedia](https://en.wikipedia.org/wiki/Gene_Ontology_Term_Enrichment) page for a brief background overview. Briefly, most genes are have a number of GO terms associated with them.
+
+- When we do GO enrichment analysis, we are trying to identify the GO terms that are over-represented in our data more than we would expect them to be. This is usually done using a hypergeometric test (see [here](http://pedagogix-tagc.univ-mrs.fr/courses/ASG1/practicals/go_statistics_td/go_statistics_td_2015.html) for background reading). 
+
+- Here we are using the `enrichGO` function from the *clusterProfiler* package. Please refer to **Section 5.3: GO Over-Representation Test** from the [clusterProfiler documentation](http://yulab-smu.top/clusterProfiler-book/chapter5.html#go-over-representation-test) for more details on the code below. 
+
+- We will consider GO terms to be significantly enriched in our differentially expressed genes if they have an FDR-adjusted *p*-value from hypergeometric test < 0.05. 
+
+```{r}
+GOresults <- enrichGO(
+  gene = sigDEresults$gene,
+  OrgDb = org.Hs.eg.db,
+  keyType = "SYMBOL", 
+  universe = rownames(dge),
+  pAdjustMethod = "fdr",
+  pvalueCutoff = 0.05
+)  %>% 
+  simplify() # This step helps to remove redundant GO terms using semantic similarity
+```
+
+- The results of GO analysis are stored in `GOresults@result`. 
+
+```{r}
+GOresultsTable <- GOresults@result
+```
+
+- The table is shown below. The columns in the table have the following meaning:
+
+- **ID**: GO identifier
+- **Description**: GO term description
+- **Gene Ratio**: Number of DE genes with the GO term, compared to total number of DE genes
+- **BgRatio**: Number of genes with the GO term (from all genes), compared to all genes 
+- **p.adjust**: FDR-adjusted p-value
+- **qvalue**: Q-value (alternative to using FDR)
+- **geneID**: DE genes that have that particular GO term
+- **Count**: Number of DE genes with that particular GO term
+
+```{r}
+GOresultsTable %>% 
+  kable %>% 
+  kable_styling() %>%
+  scroll_box(height = "600px")
+```
+
+### Questions 
+
+8. What are the most significantly enriched GO terms in our differentially expressed genes? Do they make sense in the biological context of this experiment?
+9. Pick any significant GO term from the table above and plot boxplots for the genes contributing to enrichment of that GO term. Do the genes show similar expression differences in `Covid19` compared to `Healthy` samples? 
+
+### Visualisation
+
+- The results of the GO analysis can be visualised using a network plot. This plot is useful for visualising the enriched GO terms (shown as beige spots) and the genes belonging to them or shared between them (genes shown as grey spots). 
+
+- `cnetplot` by default only plots the top 5 most enriched GO terms, so in order to plot all of the enriched GO terms, I have set the `showCategory` parameter to the number of rows in the `GOresultsTable` (which only contains significantly enriched GO terms). 
+
+```{r fig.width=11, fig.height=8}
+GOnetwork_plot <- GOresults %>% 
+  cnetplot(cex_label_gene = 0.4, 
+           showCategory = nrow(GOresultsTable))
+GOnetwork_plot
+```
+
+- This network plot will be exported as a PDF into the `output` folder as follows:
+
+```{r}
+GOnetwork_plot %>% export::graph2pdf(here("output", "GO_network.pdf"))
+```
+
+

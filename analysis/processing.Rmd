@@ -1,0 +1,355 @@
+---
+title: "Setting up for Differential Gene Expression Analysis"
+author: "Nhi Hin"
+date: "2021-06-28"
+output: workflowr::wflow_html
+editor_options:
+  chunk_output_type: console
+---
+
+
+```{r Load-Packages, include=FALSE, warning=FALSE, error=FALSE}
+# Working with data:
+library(dplyr)
+library(magrittr)
+library(readr)
+library(tibble)
+library(reshape2)
+
+# Visualisation:
+library(kableExtra)
+library(ggplot2)
+library(ggbiplot)
+library(ggrepel)
+library(grid)
+# Set ggplot theme
+theme_set(theme_bw())
+
+# Other packages:
+library(here)
+library(export)
+
+# Bioconductor packages:
+library(AnnotationHub)
+library(edgeR)
+library(limma)
+library(Glimma)
+```
+
+## Summary
+
+- On this page, we will prepare the data for the differential gene expression analysis. This involves:
+
+1. Importing in the gene counts and sample metadata.
+2. Obtaining gene annotations for the genes detected in this experiment.
+3. Creating a `DGEList` object to store the gene counts, sample metadata, and gene annotations in a single object. 
+4. Dimension reduction to check how similar samples are, as well as whether there are any mislabeled samples. 
+5. Export out `DGEList` for use in the [differential gene expression analysis](de.html). 
+
+
+## Data Description
+
+- The dataset we will be using in this analysis comes from a recent study published in [Cell](https://www.cell.com/iscience/pdf/S2589-0042(21)00679-9.pdf). 
+
+- The data has been uploaded onto the public repository GEO with the [GSE171110](https://www.ncbi.nlm.nih.gov/geo/query/acc.cgi?acc=GSE171110) accession number, and I've copied the description of the data the authors gave there below:
+
+<blockquote>
+The identification of COVID-19 patients with high-risk of severe disease is a challenge in routine care. We performed blood RNA-seq gene expression analyses in severe hospitalized patients compared to healthy donors. Supervised and unsupervised analyses revealed a high abundance of CD177, a specific neutrophil activation marker, contributing to the clustering of severe patients. Gene abundance correlated with high serum levels of CD177 in severe patients. These results highlight neutrophil activation as a hallmark of severe disease and CD177 assessment as a reliable prognostic marker for routine care.
+</blockquote>
+
+- The data was pre-processed by the authors of the [Cell](https://www.cell.com/iscience/pdf/S2589-0042(21)00679-9.pdf) paper, by aligning .fastq files to the human `hg18` transcriptome using [Salmon](https://www.ncbi.nlm.nih.gov/pmc/articles/PMC5600148/). We will not be covering the pre-processing in this workshop due to time constraints, although I would highly encourage those interested to bookmark the [Salmon documentation](https://salmon.readthedocs.io/en/latest/salmon.html#using-salmon) which goes through the commands needed to run Salmon on .fastq files yourself.
+
+## Import Data
+
+- The first step is to import the gene counts and sample metadata data into R. 
+
+### Gene count matrix
+
+- The raw gene counts after RNA-seq data pre-processing were downloaded from GEO  [GSE171110](https://www.ncbi.nlm.nih.gov/geo/query/acc.cgi?acc=GSE171110) under the "Supplementary Files". The `GSE171110_Data_RNAseq_raw_counts_geo.txt.gz` supplementary file was downloaded and uncompressed into the `data` directory, and the resulting tab-delimited text file (containing gene counts) is imported below. 
+
+```{r importGeneCounts, message=FALSE, warning=FALSE}
+counts <- readr::read_tsv(here("data", 
+                               "GSE171110_Data_RNAseq_raw_counts_geo.txt"), 
+                          skip = 2, 
+                          col_names = TRUE) %>%
+  as.data.frame %>%
+  tibble::column_to_rownames("Code_Patient")
+```
+
+- By previewing the `counts` object below, we can see that each row is a gene and each column is a sample. The `counts` object is a type of object in R called a `data.frame` which you can basically think of as being like a spreadsheet but in R. 
+
+```{r message=FALSE, warning=FALSE}
+# Preview first 5 rows and columns
+counts[1:5,1:5]
+```
+
+- The `nrow` and `ncol` functions can be used to check how many rows and columns are in a `data.frame` object:
+
+```{r message=FALSE, warning=FALSE}
+nrow(counts)
+ncol(counts)
+```
+
+#### Questions
+
+1. How many genes are in this dataset?
+2. How many Healthy and Covid-19 samples are in this dataset? 
+
+### Sample Metadata Table
+
+- We import the sample metadata from the table stored in the CSV file at `data/sample_table.csv` and store it in an object called `samples`:
+
+```{r}
+samples <- readr::read_csv(here("data", "sample_table.csv")) %>%
+  as.data.frame
+```
+
+- As we can see in the preview below, each row in the `samples` `data.frame` is a sample, and the columns represent different characteristics/information about the samples, including `age`, `sex`, and `group` (Healthy or Covid-19). 
+
+```{r}
+samples %>%
+  kable %>%
+  kable_styling()
+```
+
+### Readable sample names
+
+- You may have noticed when previewing the gene counts matrix stored in `counts` using `head(counts)` earlier that the sample names are not very descriptive (eg. 507-V, 1189-V etc.). These correspond to the `patient_code` column in the sample metadata table above. 
+
+- Below, we will replace these `patient_code` names in the gene counts with readable sample names so that the rest of the analysis is easier to interpret, especially when visualising the data. 
+
+- First, we create a new column in the `samples` metadata table, called `sample`, that will contain readable sample names (the `group` they are in followed by a number):
+
+```{r}
+samples <- samples %>%
+  dplyr::mutate(sample = paste0(group, "_", c(1:10, 1:44))) 
+
+rownames(samples) <- samples$sample
+
+# Preview the samples table with the added column:
+samples %>%
+  kable %>%
+  kable_styling()
+```
+
+- We will then set the column names in `counts` (corresponding to sample names) to the new readable sample names:
+
+```{r}
+# Reorder the columns in `counts` so they are in the same order as the rows in the samples table
+counts <- counts[, samples$patient_code] 
+
+# Set the colnames to the readable sample names
+colnames(counts) <- samples$sample 
+
+head(counts)
+```
+
+
+
+## Gene annotations
+
+- Gene annotations are useful for later interpreting the results of the differential gene expression analysis. They give information about genes, including genomic location (e.g. start and end coordinates), descriptions, type of gene (e.g. whether it's a non-coding or protein-coding gene) etc. 
+
+- Below, we retrieve gene annotation metadata from the Ensembl database (this step can take a while to run if running `AnnotationHub` for the first time, so I have saved out the `genes` object as an R object). 
+
+```{r eval=FALSE}
+# Below is not run in this RMarkdown document:
+
+# Load annotation hub
+ah <- AnnotationHub()
+
+# Search for the correct Ensembl gene annotation
+ah %>%
+  subset(grepl("sapiens", species)) %>%
+  subset(rdataclass == "EnsDb")
+
+ensDb <- ah[["AH78783"]]
+
+# Get gene annotations
+genes <- genes(ensDb) %>%
+  as.data.frame
+
+# genes %>% saveRDS(here("data", "R", "genes.rds"))
+```
+
+```{r}
+# I load in a saved version below since the above code can take a while to run 
+# if AnnotationHub objects are not already pre-downloaded. 
+genes <- readRDS(here("data", "R", "genes.rds"))
+```
+
+- The `genes` data.frame is prepared so that the `row.names` (corresponding to Ensembl gene IDs) are in the same order as for the gene count matrix stored in `counts`. 
+
+```{r message=FALSE, warning=FALSE}
+genes <- data.frame(gene = rownames(counts)) %>%
+  left_join(genes %>% as.data.frame, 
+            by = c("gene"="symbol")) %>%
+  dplyr::distinct(gene, .keep_all=TRUE) 
+
+rownames(genes) <- genes$gene
+```
+
+- From previewing the gene annotations below, we can see that each row is a gene and each column contains information about the gene. 
+
+```{r}
+genes %>%
+  head(50) %>%
+  kable %>%
+  kable_styling %>%
+  scroll_box(height = "600px")
+```
+
+- The columns of information about the genes include:
+
+    - **seqnames**: Chromosome the gene is located on
+    - **start**: Start coordinate
+    - **end**: End coordinate
+    - **width**: Length of gene (bp)
+    - **strand** Strand the gene is located on
+    - **gene_id**: Ensembl gene identifier
+    - **gene_name**: Gene symbol
+    - **gene_biotype**: Type of gene
+    - **seq_coord_system**: Whether the gene is located on a chromosome or scaffold
+    - **description**: Short description of the gene / what it encodes
+    - **gene_id_version**: Version of the gene model in Ensembl
+    - **entrezid**: Entrez gene identifier
+
+- This information can help to put the differential gene expression analysis results in context later. For example, in some analyses, people may wish to focus on looking at particular `gene_biotype`s (e.g. protein-coding genes). 
+
+- By using the `table` function, we can count the number of genes belonging to each `gene_biotype` in this particular dataset. 
+
+```{r}
+genes$gene_biotype %>%
+  table
+```
+
+### Questions
+
+3. What percentage of genes in this dataset are `protein_coding`?
+
+## Create DGEList object
+
+- We will store the gene counts, sample information, and gene information in a `DGEList` (Digital Gene Expression) object called `dge`, which simplifies plotting and interacting with this information. It will also be used for the [differential gene expression analysis](de.html) later on. 
+
+-  The `DGEList` object is prepared as follows. Here, we remove all genes that have 0 counts across all samples, and apply Trimmed Mean of M-values (TMM) normalisation to normalise counts according to library size differences between samples. 
+
+```{r createDGEList}
+dge <- DGEList(counts = counts, 
+               genes = genes,
+               samples = samples,
+               remove.zeros = TRUE) %>%  
+  calcNormFactors("TMM")
+
+# Preview the DGEList object
+dge
+```
+
+- The `counts`, `genes` or `samples` can be accessed from the `dge` object using the `$` operator. This is exactly the same information as that stored in the original `counts`, `samples` and `genes` objects, but putting them together in the `dge` object makes it easier to do certain plots/analysis later. 
+
+```{r}
+# Preview first 5 rows and columns of the counts stored in `dge`:
+dge$counts[1:5, 1:5]
+
+# Preview first 5 rows and columns of the samples stored in `dge`:
+dge$samples[1:5, 1:5]
+
+# Preview first 5 rows and columns of the genes stored in `dge`:
+dge$genes[1:5, 1:5]
+```
+
+
+## Quality Checks
+
+- In this section we will do some basic quality checks to see if any samples are outliers or potentially mislabeled. 
+
+### Library Sizes of samples
+
+- Overall, the library sizes of samples are shown. Sometimes if there is an outlier sample with an abnormally large or small library size, it is worth keeping an eye on in case it is a failed sample (e.g. library prep went wrong). We can see that certain samples have a larger library size below, but overall they are quite comparable.
+
+```{r libSizes}
+dge$samples %>%
+  ggplot(aes(x = sample, y = lib.size, fill = group)) +
+  geom_bar(stat = "identity") +
+  labs(y = "Library size (total number of mapped and quantified reads)",
+       x = "Sample", fill = "Group") +
+  coord_flip() 
+```
+
+### Dimension Reduction
+
+#### Multi Dimensional Scaling (MDS)
+
+- Multi Dimensional Scaling (MDS) is a dimension reduction technique that summarises expression of the top 500 most variable genes expressed in each sample down to 2 dimensions, known as `Dimension 1` and `Dimension 2`. Dimension 1 represents the largest amount of variance that can be explained in the data. Plotting these principal components can help us visualise which samples show overall similar gene expression to each other -- similar samples will be situated closer to each other on the plot.
+
+- Because our information is stored in a `DGEList` type of object, we can make use of the `glMDSPlot` function from the *Glimma* package to make an interactive MDS plot. The MDS plot produced using the function below can be viewed by navigating to the `glimma-plots` directory and clicking on the MDS-Plot.html file, or by clicking [here](assets/glimma-plots/MDS-Plot.html). 
+
+```{r}
+glMDSPlot(dge, 
+          labels = dge$samples$sample,
+          groups = dge$samples$group)
+```
+
+#### Principal Component Analysis (PCA)
+
+- Principal component analysis (PCA) is similar to MDS, but it uses all genes (`r nrow(dge)` genes for this particular dataset) to summarise down into a few principal components. Plotting these in the same way as for an MDS plot can also give us information about which samples are similar to each other. In most cases, the MDS and PCA plots will look very similar. 
+
+- Below, the PCA plot created using the `ggbiplot` function shows that overall, samples belonging to the same `group` tend to have similar gene expression patterns, and there is quite a large difference between `Healthy` and `Covid-19` samples. There do not appear to be any obvious outlier samples, although there is quite a bit of variation in gene expression amongst `Covid-19` samples. 
+
+- We will not remove any samples in this particular dataset as there is no indication so far that any of the samples are obvious outliers.
+
+```{r pca}
+# Perform PCA analysis:
+pca_analysis <- prcomp(t(cpm(dge, log=TRUE)))
+summary(pca_analysis) 
+
+# Create the plot:
+pca_plot <- ggbiplot::ggbiplot(pca_analysis, 
+                   groups = dge$samples$group, 
+                   ellipse = TRUE,
+                   var.axes = FALSE)
+
+pca_plot
+```
+
+- We also have other sample metadata including `age` and `sex` of the samples in the `dge$samples` table. These variables can also be plotted on the PCA plot by changing what is specified in the `groups` argument below, so that we can see whether samples are grouping by age or sex. Doing this is useful as it can tell us whether these variables are [confounding variables](https://en.wikipedia.org/wiki/Confounding) that have the potential to obscure real biological effects. 
+
+- Below, we can see that the ages of patients from which samples were derived ranges from 51 to 61. It does appear that some of the older patients' samples are closer to the top of the plot. 
+
+```{r}
+ggbiplot::ggbiplot(pca_analysis, 
+                   groups = dge$samples$age, 
+                   ellipse = FALSE,
+                   var.axes = FALSE)
+```
+
+- Below, we can see that `sex` of the samples does not seem to really influence where the points lie on the plot, suggesting that sex does not have a noticeable effect on gene expression of the samples here. 
+
+```{r}
+ggbiplot::ggbiplot(pca_analysis, 
+                   groups = dge$samples$sex, 
+                   ellipse = FALSE,
+                   var.axes = FALSE)
+```
+
+### Questions
+
+4. Should we treat male and female samples differently in the analysis, based on the information in the MDS/PCA plots?
+5. Should we do anything about the older patients' samples, based on the information in the MDS/PCA plots?
+
+## Next Step - Differential gene expression analysis
+
+- Overall the data quality looks good and there do not appear to be outlier samples or mislabeled samples. 
+
+- We will export the DGEList object created in this document for the next step of the analysis, [differential gene expression analysis](de.html). The `dge` object is exported into the `data/R` directory. 
+
+```{r eval=FALSE}
+r.dir <- here("data", "R")
+
+ifelse(!dir.exists(r.dir),
+       dir.create(r.dir), 
+       FALSE)
+
+dge %>% saveRDS(file.path(r.dir, "dge.rds"))
+```
+
+
