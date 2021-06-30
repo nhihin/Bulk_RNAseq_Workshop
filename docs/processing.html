@@ -1,0 +1,5801 @@
+<!DOCTYPE html>
+
+<html>
+
+<head>
+
+<meta charset="utf-8" />
+<meta name="generator" content="pandoc" />
+<meta http-equiv="X-UA-Compatible" content="IE=EDGE" />
+
+
+<meta name="author" content="Nhi Hin" />
+
+<meta name="date" content="2021-06-28" />
+
+<title>Setting up for Differential Gene Expression Analysis</title>
+
+<script src="site_libs/jquery-1.11.3/jquery.min.js"></script>
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<link href="site_libs/bootstrap-3.3.5/css/journal.min.css" rel="stylesheet" />
+<script src="site_libs/bootstrap-3.3.5/js/bootstrap.min.js"></script>
+<script src="site_libs/bootstrap-3.3.5/shim/html5shiv.min.js"></script>
+<script src="site_libs/bootstrap-3.3.5/shim/respond.min.js"></script>
+<style>h1 {font-size: 34px;}
+       h1.title {font-size: 38px;}
+       h2 {font-size: 30px;}
+       h3 {font-size: 24px;}
+       h4 {font-size: 18px;}
+       h5 {font-size: 16px;}
+       h6 {font-size: 12px;}
+       code {color: inherit; background-color: rgba(0, 0, 0, 0.04);}
+       pre:not([class]) { background-color: white }</style>
+<script src="site_libs/jqueryui-1.11.4/jquery-ui.min.js"></script>
+<link href="site_libs/tocify-1.9.1/jquery.tocify.css" rel="stylesheet" />
+<script src="site_libs/tocify-1.9.1/jquery.tocify.js"></script>
+<script src="site_libs/navigation-1.1/tabsets.js"></script>
+<link href="site_libs/highlightjs-9.12.0/textmate.css" rel="stylesheet" />
+<script src="site_libs/highlightjs-9.12.0/highlight.js"></script>
+<script src="site_libs/kePrint-0.0.1/kePrint.js"></script>
+<link href="site_libs/lightable-0.0.1/lightable.css" rel="stylesheet" />
+
+<link rel="icon" href="https://github.com/workflowr/workflowr-assets/raw/master/img/reproducible.png">
+<!-- Add a small amount of space between sections. -->
+<style type="text/css">
+div.section {
+  padding-top: 12px;
+}
+</style>
+
+<style type="text/css">
+  code{white-space: pre-wrap;}
+  span.smallcaps{font-variant: small-caps;}
+  span.underline{text-decoration: underline;}
+  div.column{display: inline-block; vertical-align: top; width: 50%;}
+  div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+  ul.task-list{list-style: none;}
+    </style>
+
+<style type="text/css">code{white-space: pre;}</style>
+<script type="text/javascript">
+if (window.hljs) {
+  hljs.configure({languages: []});
+  hljs.initHighlightingOnLoad();
+  if (document.readyState && document.readyState === "complete") {
+    window.setTimeout(function() { hljs.initHighlighting(); }, 0);
+  }
+}
+</script>
+
+
+
+
+
+
+
+
+<style type = "text/css">
+.main-container {
+  max-width: 940px;
+  margin-left: auto;
+  margin-right: auto;
+}
+img {
+  max-width:100%;
+}
+.tabbed-pane {
+  padding-top: 12px;
+}
+.html-widget {
+  margin-bottom: 20px;
+}
+button.code-folding-btn:focus {
+  outline: none;
+}
+summary {
+  display: list-item;
+}
+pre code {
+  padding: 0;
+}
+</style>
+
+
+<style type="text/css">
+.dropdown-submenu {
+  position: relative;
+}
+.dropdown-submenu>.dropdown-menu {
+  top: 0;
+  left: 100%;
+  margin-top: -6px;
+  margin-left: -1px;
+  border-radius: 0 6px 6px 6px;
+}
+.dropdown-submenu:hover>.dropdown-menu {
+  display: block;
+}
+.dropdown-submenu>a:after {
+  display: block;
+  content: " ";
+  float: right;
+  width: 0;
+  height: 0;
+  border-color: transparent;
+  border-style: solid;
+  border-width: 5px 0 5px 5px;
+  border-left-color: #cccccc;
+  margin-top: 5px;
+  margin-right: -10px;
+}
+.dropdown-submenu:hover>a:after {
+  border-left-color: #adb5bd;
+}
+.dropdown-submenu.pull-left {
+  float: none;
+}
+.dropdown-submenu.pull-left>.dropdown-menu {
+  left: -100%;
+  margin-left: 10px;
+  border-radius: 6px 0 6px 6px;
+}
+</style>
+
+<script type="text/javascript">
+// manage active state of menu based on current page
+$(document).ready(function () {
+  // active menu anchor
+  href = window.location.pathname
+  href = href.substr(href.lastIndexOf('/') + 1)
+  if (href === "")
+    href = "index.html";
+  var menuAnchor = $('a[href="' + href + '"]');
+
+  // mark it active
+  menuAnchor.tab('show');
+
+  // if it's got a parent navbar menu mark it active as well
+  menuAnchor.closest('li.dropdown').addClass('active');
+
+  // Navbar adjustments
+  var navHeight = $(".navbar").first().height() + 15;
+  var style = document.createElement('style');
+  var pt = "padding-top: " + navHeight + "px; ";
+  var mt = "margin-top: -" + navHeight + "px; ";
+  var css = "";
+  // offset scroll position for anchor links (for fixed navbar)
+  for (var i = 1; i <= 6; i++) {
+    css += ".section h" + i + "{ " + pt + mt + "}\n";
+  }
+  style.innerHTML = "body {" + pt + "padding-bottom: 40px; }\n" + css;
+  document.head.appendChild(style);
+});
+</script>
+
+<!-- tabsets -->
+
+<style type="text/css">
+.tabset-dropdown > .nav-tabs {
+  display: inline-table;
+  max-height: 500px;
+  min-height: 44px;
+  overflow-y: auto;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+}
+
+.tabset-dropdown > .nav-tabs > li.active:before {
+  content: "";
+  font-family: 'Glyphicons Halflings';
+  display: inline-block;
+  padding: 10px;
+  border-right: 1px solid #ddd;
+}
+
+.tabset-dropdown > .nav-tabs.nav-tabs-open > li.active:before {
+  content: "&#xe258;";
+  border: none;
+}
+
+.tabset-dropdown > .nav-tabs.nav-tabs-open:before {
+  content: "";
+  font-family: 'Glyphicons Halflings';
+  display: inline-block;
+  padding: 10px;
+  border-right: 1px solid #ddd;
+}
+
+.tabset-dropdown > .nav-tabs > li.active {
+  display: block;
+}
+
+.tabset-dropdown > .nav-tabs > li > a,
+.tabset-dropdown > .nav-tabs > li > a:focus,
+.tabset-dropdown > .nav-tabs > li > a:hover {
+  border: none;
+  display: inline-block;
+  border-radius: 4px;
+  background-color: transparent;
+}
+
+.tabset-dropdown > .nav-tabs.nav-tabs-open > li {
+  display: block;
+  float: none;
+}
+
+.tabset-dropdown > .nav-tabs > li {
+  display: none;
+}
+</style>
+
+<!-- code folding -->
+
+
+
+<style type="text/css">
+
+#TOC {
+  margin: 25px 0px 20px 0px;
+}
+@media (max-width: 768px) {
+#TOC {
+  position: relative;
+  width: 100%;
+}
+}
+
+@media print {
+.toc-content {
+  /* see https://github.com/w3c/csswg-drafts/issues/4434 */
+  float: right;
+}
+}
+
+.toc-content {
+  padding-left: 30px;
+  padding-right: 40px;
+}
+
+div.main-container {
+  max-width: 1200px;
+}
+
+div.tocify {
+  width: 20%;
+  max-width: 260px;
+  max-height: 85%;
+}
+
+@media (min-width: 768px) and (max-width: 991px) {
+  div.tocify {
+    width: 25%;
+  }
+}
+
+@media (max-width: 767px) {
+  div.tocify {
+    width: 100%;
+    max-width: none;
+  }
+}
+
+.tocify ul, .tocify li {
+  line-height: 20px;
+}
+
+.tocify-subheader .tocify-item {
+  font-size: 0.90em;
+}
+
+.tocify .list-group-item {
+  border-radius: 0px;
+}
+
+
+</style>
+
+
+
+</head>
+
+<body>
+
+
+<div class="container-fluid main-container">
+
+
+<!-- setup 3col/9col grid for toc_float and main content  -->
+<div class="row">
+<div class="col-xs-12 col-sm-4 col-md-3">
+<div id="TOC" class="tocify">
+</div>
+</div>
+
+<div class="toc-content col-xs-12 col-sm-8 col-md-9">
+
+
+
+
+<div class="navbar navbar-default  navbar-fixed-top" role="navigation">
+  <div class="container">
+    <div class="navbar-header">
+      <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar">
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </button>
+      <a class="navbar-brand" href="index.html">Bulk RNA-seq</a>
+    </div>
+    <div id="navbar" class="navbar-collapse collapse">
+      <ul class="nav navbar-nav">
+        <li>
+  <a href="index.html">Introduction</a>
+</li>
+<li>
+  <a href="processing.html">Setting Up</a>
+</li>
+<li>
+  <a href="de.html">Differential Gene Expression Analysis</a>
+</li>
+      </ul>
+      <ul class="nav navbar-nav navbar-right">
+        
+      </ul>
+    </div><!--/.nav-collapse -->
+  </div><!--/.container -->
+</div><!--/.navbar -->
+
+<div id="header">
+
+
+
+<h1 class="title toc-ignore">Setting up for Differential Gene Expression Analysis</h1>
+<h4 class="author">Nhi Hin</h4>
+<h4 class="date">2021-06-28</h4>
+
+</div>
+
+
+<p>
+<button type="button" class="btn btn-default btn-workflowr btn-workflowr-report" data-toggle="collapse" data-target="#workflowr-report">
+<span class="glyphicon glyphicon-list" aria-hidden="true"></span> workflowr <span class="glyphicon glyphicon-ok text-success" aria-hidden="true"></span>
+</button>
+</p>
+<div id="workflowr-report" class="collapse">
+<ul class="nav nav-tabs">
+<li class="active">
+<a data-toggle="tab" href="#summary">Summary</a>
+</li>
+<li>
+<a data-toggle="tab" href="#checks"> Checks <span class="glyphicon glyphicon-ok text-success" aria-hidden="true"></span> </a>
+</li>
+<li>
+<a data-toggle="tab" href="#versions">Past versions</a>
+</li>
+</ul>
+<div class="tab-content">
+<div id="summary" class="tab-pane fade in active">
+<p>
+<strong>Last updated:</strong> 2021-06-30
+</p>
+<p>
+<strong>Checks:</strong> <span class="glyphicon glyphicon-ok text-success" aria-hidden="true"></span> 7 <span class="glyphicon glyphicon-exclamation-sign text-danger" aria-hidden="true"></span> 0
+</p>
+<p>
+<strong>Knit directory:</strong> <code>Bulk_RNAseq/</code> <span class="glyphicon glyphicon-question-sign" aria-hidden="true" title="This is the local directory in which the code in this file was executed."> </span>
+</p>
+<p>
+This reproducible <a href="http://rmarkdown.rstudio.com">R Markdown</a> analysis was created with <a
+  href="https://github.com/jdblischak/workflowr">workflowr</a> (version 1.6.2). The <em>Checks</em> tab describes the reproducibility checks that were applied when the results were created. The <em>Past versions</em> tab lists the development history.
+</p>
+<hr>
+</div>
+<div id="checks" class="tab-pane fade">
+<div id="workflowr-checks" class="panel-group">
+<div class="panel panel-default">
+<div class="panel-heading">
+<p class="panel-title">
+<a data-toggle="collapse" data-parent="#workflowr-checks" href="#strongRMarkdownfilestronguptodate"> <span class="glyphicon glyphicon-ok text-success" aria-hidden="true"></span> <strong>R Markdown file:</strong> up-to-date </a>
+</p>
+</div>
+<div id="strongRMarkdownfilestronguptodate" class="panel-collapse collapse">
+<div class="panel-body">
+<p>Great! Since the R Markdown file has been committed to the Git repository, you know the exact version of the code that produced these results.</p>
+</div>
+</div>
+</div>
+<div class="panel panel-default">
+<div class="panel-heading">
+<p class="panel-title">
+<a data-toggle="collapse" data-parent="#workflowr-checks" href="#strongEnvironmentstrongempty"> <span class="glyphicon glyphicon-ok text-success" aria-hidden="true"></span> <strong>Environment:</strong> empty </a>
+</p>
+</div>
+<div id="strongEnvironmentstrongempty" class="panel-collapse collapse">
+<div class="panel-body">
+<p>Great job! The global environment was empty. Objects defined in the global environment can affect the analysis in your R Markdown file in unknown ways. For reproduciblity it’s best to always run the code in an empty environment.</p>
+</div>
+</div>
+</div>
+<div class="panel panel-default">
+<div class="panel-heading">
+<p class="panel-title">
+<a data-toggle="collapse" data-parent="#workflowr-checks" href="#strongSeedstrongcodesetseed20210629code"> <span class="glyphicon glyphicon-ok text-success" aria-hidden="true"></span> <strong>Seed:</strong> <code>set.seed(20210629)</code> </a>
+</p>
+</div>
+<div id="strongSeedstrongcodesetseed20210629code" class="panel-collapse collapse">
+<div class="panel-body">
+<p>The command <code>set.seed(20210629)</code> was run prior to running the code in the R Markdown file. Setting a seed ensures that any results that rely on randomness, e.g. subsampling or permutations, are reproducible.</p>
+</div>
+</div>
+</div>
+<div class="panel panel-default">
+<div class="panel-heading">
+<p class="panel-title">
+<a data-toggle="collapse" data-parent="#workflowr-checks" href="#strongSessioninformationstrongrecorded"> <span class="glyphicon glyphicon-ok text-success" aria-hidden="true"></span> <strong>Session information:</strong> recorded </a>
+</p>
+</div>
+<div id="strongSessioninformationstrongrecorded" class="panel-collapse collapse">
+<div class="panel-body">
+<p>Great job! Recording the operating system, R version, and package versions is critical for reproducibility.</p>
+</div>
+</div>
+</div>
+<div class="panel panel-default">
+<div class="panel-heading">
+<p class="panel-title">
+<a data-toggle="collapse" data-parent="#workflowr-checks" href="#strongCachestrongnone"> <span class="glyphicon glyphicon-ok text-success" aria-hidden="true"></span> <strong>Cache:</strong> none </a>
+</p>
+</div>
+<div id="strongCachestrongnone" class="panel-collapse collapse">
+<div class="panel-body">
+<p>Nice! There were no cached chunks for this analysis, so you can be confident that you successfully produced the results during this run.</p>
+</div>
+</div>
+</div>
+<div class="panel panel-default">
+<div class="panel-heading">
+<p class="panel-title">
+<a data-toggle="collapse" data-parent="#workflowr-checks" href="#strongFilepathsstrongrelative"> <span class="glyphicon glyphicon-ok text-success" aria-hidden="true"></span> <strong>File paths:</strong> relative </a>
+</p>
+</div>
+<div id="strongFilepathsstrongrelative" class="panel-collapse collapse">
+<div class="panel-body">
+<p>Great job! Using relative paths to the files within your workflowr project makes it easier to run your code on other machines.</p>
+</div>
+</div>
+</div>
+<div class="panel panel-default">
+<div class="panel-heading">
+<p class="panel-title">
+<a data-toggle="collapse" data-parent="#workflowr-checks" href="#strongRepositoryversionstrongahrefhttpsgithubcomnhihinBulkRNAseqtree1d1160f57f52beb2ca4aa9455b6d4ca0cc88c273targetblank1d1160fa"> <span class="glyphicon glyphicon-ok text-success" aria-hidden="true"></span> <strong>Repository version:</strong> <a href="https://github.com/nhihin/Bulk_RNAseq/tree/1d1160f57f52beb2ca4aa9455b6d4ca0cc88c273" target="_blank">1d1160f</a> </a>
+</p>
+</div>
+<div id="strongRepositoryversionstrongahrefhttpsgithubcomnhihinBulkRNAseqtree1d1160f57f52beb2ca4aa9455b6d4ca0cc88c273targetblank1d1160fa" class="panel-collapse collapse">
+<div class="panel-body">
+<p>
+Great! You are using Git for version control. Tracking code development and connecting the code version to the results is critical for reproducibility.
+</p>
+<p>
+The results in this page were generated with repository version <a href="https://github.com/nhihin/Bulk_RNAseq/tree/1d1160f57f52beb2ca4aa9455b6d4ca0cc88c273" target="_blank">1d1160f</a>. See the <em>Past versions</em> tab to see a history of the changes made to the R Markdown and HTML files.
+</p>
+<p>
+Note that you need to be careful to ensure that all relevant files for the analysis have been committed to Git prior to generating the results (you can use <code>wflow_publish</code> or <code>wflow_git_commit</code>). workflowr only checks the R Markdown file, but you know if there are other scripts or data files that it depends on. Below is the status of the Git repository when the results were generated:
+</p>
+<pre><code>
+Ignored files:
+    Ignored:    .Rproj.user/
+    Ignored:    analysis/.DS_Store
+
+Untracked files:
+    Untracked:  data/
+    Untracked:  glimma-plots/
+    Untracked:  output/
+    Untracked:  renv.lock
+    Untracked:  renv/
+
+</code></pre>
+<p>
+Note that any generated files, e.g. HTML, png, CSS, etc., are not included in this status report because it is ok for generated content to have uncommitted changes.
+</p>
+</div>
+</div>
+</div>
+</div>
+<hr>
+</div>
+<div id="versions" class="tab-pane fade">
+
+<p>
+These are the previous versions of the repository in which changes were made to the R Markdown (<code>analysis/processing.Rmd</code>) and HTML (<code>docs/processing.html</code>) files. If you’ve configured a remote Git repository (see <code>?wflow_git_remote</code>), click on the hyperlinks in the table below to view the files as they were in that past version.
+</p>
+<div class="table-responsive">
+<table class="table table-condensed table-hover">
+<thead>
+<tr>
+<th>
+File
+</th>
+<th>
+Version
+</th>
+<th>
+Author
+</th>
+<th>
+Date
+</th>
+<th>
+Message
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>
+Rmd
+</td>
+<td>
+<a href="https://github.com/nhihin/Bulk_RNAseq/blob/1d1160f57f52beb2ca4aa9455b6d4ca0cc88c273/analysis/processing.Rmd" target="_blank">1d1160f</a>
+</td>
+<td>
+Nhi Hin
+</td>
+<td>
+2021-06-30
+</td>
+<td>
+wflow_publish("analysis/*.Rmd")
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+<hr>
+</div>
+</div>
+</div>
+<div id="summary" class="section level2">
+<h2>Summary</h2>
+<ul>
+<li>On this page, we will prepare the data for the differential gene expression analysis. This involves:</li>
+</ul>
+<ol style="list-style-type: decimal">
+<li>Importing in the gene counts and sample metadata.</li>
+<li>Obtaining gene annotations for the genes detected in this experiment.</li>
+<li>Creating a <code>DGEList</code> object to store the gene counts, sample metadata, and gene annotations in a single object.</li>
+<li>Dimension reduction to check how similar samples are, as well as whether there are any mislabeled samples.</li>
+<li>Export out <code>DGEList</code> for use in the <a href="de.html">differential gene expression analysis</a>.</li>
+</ol>
+</div>
+<div id="data-description" class="section level2">
+<h2>Data Description</h2>
+<ul>
+<li><p>The dataset we will be using in this analysis comes from a recent study published in <a href="https://www.cell.com/iscience/pdf/S2589-0042(21)00679-9.pdf">Cell</a>.</p></li>
+<li><p>The data has been uploaded onto the public repository GEO with the <a href="https://www.ncbi.nlm.nih.gov/geo/query/acc.cgi?acc=GSE171110">GSE171110</a> accession number, and I’ve copied the description of the data the authors gave there below:</p></li>
+</ul>
+<blockquote>
+The identification of COVID-19 patients with high-risk of severe disease is a challenge in routine care. We performed blood RNA-seq gene expression analyses in severe hospitalized patients compared to healthy donors. Supervised and unsupervised analyses revealed a high abundance of CD177, a specific neutrophil activation marker, contributing to the clustering of severe patients. Gene abundance correlated with high serum levels of CD177 in severe patients. These results highlight neutrophil activation as a hallmark of severe disease and CD177 assessment as a reliable prognostic marker for routine care.
+</blockquote>
+<ul>
+<li>The data was pre-processed by the authors of the <a href="https://www.cell.com/iscience/pdf/S2589-0042(21)00679-9.pdf">Cell</a> paper, by aligning .fastq files to the human <code>hg18</code> transcriptome using <a href="https://www.ncbi.nlm.nih.gov/pmc/articles/PMC5600148/">Salmon</a>. We will not be covering the pre-processing in this workshop due to time constraints, although I would highly encourage those interested to bookmark the <a href="https://salmon.readthedocs.io/en/latest/salmon.html#using-salmon">Salmon documentation</a> which goes through the commands needed to run Salmon on .fastq files yourself.</li>
+</ul>
+</div>
+<div id="import-data" class="section level2">
+<h2>Import Data</h2>
+<ul>
+<li>The first step is to import the gene counts and sample metadata data into R.</li>
+</ul>
+<div id="gene-count-matrix" class="section level3">
+<h3>Gene count matrix</h3>
+<ul>
+<li>The raw gene counts after RNA-seq data pre-processing were downloaded from GEO <a href="https://www.ncbi.nlm.nih.gov/geo/query/acc.cgi?acc=GSE171110">GSE171110</a> under the “Supplementary Files”. The <code>GSE171110_Data_RNAseq_raw_counts_geo.txt.gz</code> supplementary file was downloaded and uncompressed into the <code>data</code> directory, and the resulting tab-delimited text file (containing gene counts) is imported below.</li>
+</ul>
+<pre class="r"><code>counts &lt;- readr::read_tsv(here(&quot;data&quot;, 
+                               &quot;GSE171110_Data_RNAseq_raw_counts_geo.txt&quot;), 
+                          skip = 2, 
+                          col_names = TRUE) %&gt;%
+  as.data.frame %&gt;%
+  tibble::column_to_rownames(&quot;Code_Patient&quot;)</code></pre>
+<ul>
+<li>By previewing the <code>counts</code> object below, we can see that each row is a gene and each column is a sample. The <code>counts</code> object is a type of object in R called a <code>data.frame</code> which you can basically think of as being like a spreadsheet but in R.</li>
+</ul>
+<pre class="r"><code># Preview first 5 rows and columns
+counts[1:5,1:5]</code></pre>
+<pre><code>          507-V    1189-V   1406-V   1918-V   1951-V
+A1BG  133.14360 110.14223 94.68670 89.60004 85.81497
+A1CF    9.00000   8.00000  1.00000 10.00020  3.00000
+A2M    65.00001  31.72058 36.63567 19.22508 27.99998
+A2ML1  29.28124  26.30470 20.57935 13.00000  5.00000
+A2MP1 262.00034  83.00004 98.99997 55.99998 41.00000</code></pre>
+<ul>
+<li>The <code>nrow</code> and <code>ncol</code> functions can be used to check how many rows and columns are in a <code>data.frame</code> object:</li>
+</ul>
+<pre class="r"><code>nrow(counts)</code></pre>
+<pre><code>[1] 30185</code></pre>
+<pre class="r"><code>ncol(counts)</code></pre>
+<pre><code>[1] 54</code></pre>
+<div id="questions" class="section level4">
+<h4>Questions</h4>
+<ol style="list-style-type: decimal">
+<li>How many genes are in this dataset?</li>
+<li>How many Healthy and Covid-19 samples are in this dataset?</li>
+</ol>
+</div>
+</div>
+<div id="sample-metadata-table" class="section level3">
+<h3>Sample Metadata Table</h3>
+<ul>
+<li>We import the sample metadata from the table stored in the CSV file at <code>data/sample_table.csv</code> and store it in an object called <code>samples</code>:</li>
+</ul>
+<pre class="r"><code>samples &lt;- readr::read_csv(here(&quot;data&quot;, &quot;sample_table.csv&quot;)) %&gt;%
+  as.data.frame</code></pre>
+<pre><code>
+── Column specification ────────────────────────────────────────────────────────
+cols(
+  patient_code = col_character(),
+  age = col_double(),
+  sex = col_character(),
+  group = col_character(),
+  geo_accession = col_character()
+)</code></pre>
+<ul>
+<li>As we can see in the preview below, each row in the <code>samples</code> <code>data.frame</code> is a sample, and the columns represent different characteristics/information about the samples, including <code>age</code>, <code>sex</code>, and <code>group</code> (Healthy or Covid-19).</li>
+</ul>
+<pre class="r"><code>samples %&gt;%
+  kable %&gt;%
+  kable_styling()</code></pre>
+<table class="table" style="margin-left: auto; margin-right: auto;">
+<thead>
+<tr>
+<th style="text-align:left;">
+patient_code
+</th>
+<th style="text-align:right;">
+age
+</th>
+<th style="text-align:left;">
+sex
+</th>
+<th style="text-align:left;">
+group
+</th>
+<th style="text-align:left;">
+geo_accession
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:left;">
+507-V
+</td>
+<td style="text-align:right;">
+53
+</td>
+<td style="text-align:left;">
+M
+</td>
+<td style="text-align:left;">
+Healthy
+</td>
+<td style="text-align:left;">
+GSM5218990
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+1189-V
+</td>
+<td style="text-align:right;">
+57
+</td>
+<td style="text-align:left;">
+F
+</td>
+<td style="text-align:left;">
+Healthy
+</td>
+<td style="text-align:left;">
+GSM5218991
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+1406-V
+</td>
+<td style="text-align:right;">
+61
+</td>
+<td style="text-align:left;">
+M
+</td>
+<td style="text-align:left;">
+Healthy
+</td>
+<td style="text-align:left;">
+GSM5218992
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+1918-V
+</td>
+<td style="text-align:right;">
+56
+</td>
+<td style="text-align:left;">
+M
+</td>
+<td style="text-align:left;">
+Healthy
+</td>
+<td style="text-align:left;">
+GSM5218993
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+1951-V
+</td>
+<td style="text-align:right;">
+57
+</td>
+<td style="text-align:left;">
+F
+</td>
+<td style="text-align:left;">
+Healthy
+</td>
+<td style="text-align:left;">
+GSM5218994
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+1995-V
+</td>
+<td style="text-align:right;">
+55
+</td>
+<td style="text-align:left;">
+F
+</td>
+<td style="text-align:left;">
+Healthy
+</td>
+<td style="text-align:left;">
+GSM5218995
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+2064-V
+</td>
+<td style="text-align:right;">
+55
+</td>
+<td style="text-align:left;">
+M
+</td>
+<td style="text-align:left;">
+Healthy
+</td>
+<td style="text-align:left;">
+GSM5218996
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+3054-V
+</td>
+<td style="text-align:right;">
+60
+</td>
+<td style="text-align:left;">
+M
+</td>
+<td style="text-align:left;">
+Healthy
+</td>
+<td style="text-align:left;">
+GSM5218997
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+3136-V
+</td>
+<td style="text-align:right;">
+51
+</td>
+<td style="text-align:left;">
+F
+</td>
+<td style="text-align:left;">
+Healthy
+</td>
+<td style="text-align:left;">
+GSM5218998
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+3538-V
+</td>
+<td style="text-align:right;">
+60
+</td>
+<td style="text-align:left;">
+M
+</td>
+<td style="text-align:left;">
+Healthy
+</td>
+<td style="text-align:left;">
+GSM5218999
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+002-0001
+</td>
+<td style="text-align:right;">
+51
+</td>
+<td style="text-align:left;">
+M
+</td>
+<td style="text-align:left;">
+Covid19
+</td>
+<td style="text-align:left;">
+GSM5219000
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+002-0002
+</td>
+<td style="text-align:right;">
+60
+</td>
+<td style="text-align:left;">
+M
+</td>
+<td style="text-align:left;">
+Covid19
+</td>
+<td style="text-align:left;">
+GSM5219001
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+002-0003
+</td>
+<td style="text-align:right;">
+53
+</td>
+<td style="text-align:left;">
+F
+</td>
+<td style="text-align:left;">
+Covid19
+</td>
+<td style="text-align:left;">
+GSM5219002
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+002-0004
+</td>
+<td style="text-align:right;">
+57
+</td>
+<td style="text-align:left;">
+F
+</td>
+<td style="text-align:left;">
+Covid19
+</td>
+<td style="text-align:left;">
+GSM5219003
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+002-0011
+</td>
+<td style="text-align:right;">
+58
+</td>
+<td style="text-align:left;">
+F
+</td>
+<td style="text-align:left;">
+Covid19
+</td>
+<td style="text-align:left;">
+GSM5219004
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+002-0006
+</td>
+<td style="text-align:right;">
+55
+</td>
+<td style="text-align:left;">
+M
+</td>
+<td style="text-align:left;">
+Covid19
+</td>
+<td style="text-align:left;">
+GSM5219005
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+002-0031
+</td>
+<td style="text-align:right;">
+53
+</td>
+<td style="text-align:left;">
+M
+</td>
+<td style="text-align:left;">
+Covid19
+</td>
+<td style="text-align:left;">
+GSM5219006
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+001-0021
+</td>
+<td style="text-align:right;">
+52
+</td>
+<td style="text-align:left;">
+M
+</td>
+<td style="text-align:left;">
+Covid19
+</td>
+<td style="text-align:left;">
+GSM5219007
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+001-0033
+</td>
+<td style="text-align:right;">
+60
+</td>
+<td style="text-align:left;">
+M
+</td>
+<td style="text-align:left;">
+Covid19
+</td>
+<td style="text-align:left;">
+GSM5219008
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+001-0024
+</td>
+<td style="text-align:right;">
+61
+</td>
+<td style="text-align:left;">
+M
+</td>
+<td style="text-align:left;">
+Covid19
+</td>
+<td style="text-align:left;">
+GSM5219009
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+001-0040
+</td>
+<td style="text-align:right;">
+58
+</td>
+<td style="text-align:left;">
+M
+</td>
+<td style="text-align:left;">
+Covid19
+</td>
+<td style="text-align:left;">
+GSM5219010
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+001-0032
+</td>
+<td style="text-align:right;">
+59
+</td>
+<td style="text-align:left;">
+M
+</td>
+<td style="text-align:left;">
+Covid19
+</td>
+<td style="text-align:left;">
+GSM5219011
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+001-0029
+</td>
+<td style="text-align:right;">
+61
+</td>
+<td style="text-align:left;">
+M
+</td>
+<td style="text-align:left;">
+Covid19
+</td>
+<td style="text-align:left;">
+GSM5219012
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+002-0035
+</td>
+<td style="text-align:right;">
+51
+</td>
+<td style="text-align:left;">
+M
+</td>
+<td style="text-align:left;">
+Covid19
+</td>
+<td style="text-align:left;">
+GSM5219013
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+002-0037
+</td>
+<td style="text-align:right;">
+55
+</td>
+<td style="text-align:left;">
+M
+</td>
+<td style="text-align:left;">
+Covid19
+</td>
+<td style="text-align:left;">
+GSM5219014
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+001-0036
+</td>
+<td style="text-align:right;">
+59
+</td>
+<td style="text-align:left;">
+F
+</td>
+<td style="text-align:left;">
+Covid19
+</td>
+<td style="text-align:left;">
+GSM5219015
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+002-0040
+</td>
+<td style="text-align:right;">
+55
+</td>
+<td style="text-align:left;">
+F
+</td>
+<td style="text-align:left;">
+Covid19
+</td>
+<td style="text-align:left;">
+GSM5219016
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+002-0041
+</td>
+<td style="text-align:right;">
+57
+</td>
+<td style="text-align:left;">
+F
+</td>
+<td style="text-align:left;">
+Covid19
+</td>
+<td style="text-align:left;">
+GSM5219017
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+002-0046
+</td>
+<td style="text-align:right;">
+60
+</td>
+<td style="text-align:left;">
+M
+</td>
+<td style="text-align:left;">
+Covid19
+</td>
+<td style="text-align:left;">
+GSM5219018
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+002-0053
+</td>
+<td style="text-align:right;">
+55
+</td>
+<td style="text-align:left;">
+M
+</td>
+<td style="text-align:left;">
+Covid19
+</td>
+<td style="text-align:left;">
+GSM5219019
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+001-0068
+</td>
+<td style="text-align:right;">
+56
+</td>
+<td style="text-align:left;">
+M
+</td>
+<td style="text-align:left;">
+Covid19
+</td>
+<td style="text-align:left;">
+GSM5219020
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+002-0057
+</td>
+<td style="text-align:right;">
+51
+</td>
+<td style="text-align:left;">
+M
+</td>
+<td style="text-align:left;">
+Covid19
+</td>
+<td style="text-align:left;">
+GSM5219021
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+002-0058
+</td>
+<td style="text-align:right;">
+57
+</td>
+<td style="text-align:left;">
+M
+</td>
+<td style="text-align:left;">
+Covid19
+</td>
+<td style="text-align:left;">
+GSM5219022
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+002-0060
+</td>
+<td style="text-align:right;">
+53
+</td>
+<td style="text-align:left;">
+M
+</td>
+<td style="text-align:left;">
+Covid19
+</td>
+<td style="text-align:left;">
+GSM5219023
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+001-0094
+</td>
+<td style="text-align:right;">
+60
+</td>
+<td style="text-align:left;">
+M
+</td>
+<td style="text-align:left;">
+Covid19
+</td>
+<td style="text-align:left;">
+GSM5219024
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+002-0062
+</td>
+<td style="text-align:right;">
+55
+</td>
+<td style="text-align:left;">
+M
+</td>
+<td style="text-align:left;">
+Covid19
+</td>
+<td style="text-align:left;">
+GSM5219025
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+002-0061
+</td>
+<td style="text-align:right;">
+57
+</td>
+<td style="text-align:left;">
+M
+</td>
+<td style="text-align:left;">
+Covid19
+</td>
+<td style="text-align:left;">
+GSM5219026
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+002-0068
+</td>
+<td style="text-align:right;">
+53
+</td>
+<td style="text-align:left;">
+M
+</td>
+<td style="text-align:left;">
+Covid19
+</td>
+<td style="text-align:left;">
+GSM5219027
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+002-0067
+</td>
+<td style="text-align:right;">
+55
+</td>
+<td style="text-align:left;">
+M
+</td>
+<td style="text-align:left;">
+Covid19
+</td>
+<td style="text-align:left;">
+GSM5219028
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+002-0066
+</td>
+<td style="text-align:right;">
+51
+</td>
+<td style="text-align:left;">
+M
+</td>
+<td style="text-align:left;">
+Covid19
+</td>
+<td style="text-align:left;">
+GSM5219029
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+002-0064
+</td>
+<td style="text-align:right;">
+52
+</td>
+<td style="text-align:left;">
+M
+</td>
+<td style="text-align:left;">
+Covid19
+</td>
+<td style="text-align:left;">
+GSM5219030
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+002-0070
+</td>
+<td style="text-align:right;">
+58
+</td>
+<td style="text-align:left;">
+M
+</td>
+<td style="text-align:left;">
+Covid19
+</td>
+<td style="text-align:left;">
+GSM5219031
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+002-0072
+</td>
+<td style="text-align:right;">
+57
+</td>
+<td style="text-align:left;">
+M
+</td>
+<td style="text-align:left;">
+Covid19
+</td>
+<td style="text-align:left;">
+GSM5219032
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+001-0129
+</td>
+<td style="text-align:right;">
+56
+</td>
+<td style="text-align:left;">
+M
+</td>
+<td style="text-align:left;">
+Covid19
+</td>
+<td style="text-align:left;">
+GSM5219033
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+002-0078
+</td>
+<td style="text-align:right;">
+55
+</td>
+<td style="text-align:left;">
+M
+</td>
+<td style="text-align:left;">
+Covid19
+</td>
+<td style="text-align:left;">
+GSM5219034
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+002-0080
+</td>
+<td style="text-align:right;">
+55
+</td>
+<td style="text-align:left;">
+M
+</td>
+<td style="text-align:left;">
+Covid19
+</td>
+<td style="text-align:left;">
+GSM5219035
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+002-0079
+</td>
+<td style="text-align:right;">
+59
+</td>
+<td style="text-align:left;">
+M
+</td>
+<td style="text-align:left;">
+Covid19
+</td>
+<td style="text-align:left;">
+GSM5219036
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+002-0083
+</td>
+<td style="text-align:right;">
+54
+</td>
+<td style="text-align:left;">
+M
+</td>
+<td style="text-align:left;">
+Covid19
+</td>
+<td style="text-align:left;">
+GSM5219037
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+002-0084
+</td>
+<td style="text-align:right;">
+59
+</td>
+<td style="text-align:left;">
+M
+</td>
+<td style="text-align:left;">
+Covid19
+</td>
+<td style="text-align:left;">
+GSM5219038
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+001-0142
+</td>
+<td style="text-align:right;">
+53
+</td>
+<td style="text-align:left;">
+M
+</td>
+<td style="text-align:left;">
+Covid19
+</td>
+<td style="text-align:left;">
+GSM5219039
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+002-0088
+</td>
+<td style="text-align:right;">
+61
+</td>
+<td style="text-align:left;">
+M
+</td>
+<td style="text-align:left;">
+Covid19
+</td>
+<td style="text-align:left;">
+GSM5219040
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+002-0101
+</td>
+<td style="text-align:right;">
+58
+</td>
+<td style="text-align:left;">
+M
+</td>
+<td style="text-align:left;">
+Covid19
+</td>
+<td style="text-align:left;">
+GSM5219041
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+002-0104
+</td>
+<td style="text-align:right;">
+58
+</td>
+<td style="text-align:left;">
+M
+</td>
+<td style="text-align:left;">
+Covid19
+</td>
+<td style="text-align:left;">
+GSM5219042
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+051-0001
+</td>
+<td style="text-align:right;">
+54
+</td>
+<td style="text-align:left;">
+M
+</td>
+<td style="text-align:left;">
+Covid19
+</td>
+<td style="text-align:left;">
+GSM5219043
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+<div id="readable-sample-names" class="section level3">
+<h3>Readable sample names</h3>
+<ul>
+<li><p>You may have noticed when previewing the gene counts matrix stored in <code>counts</code> using <code>head(counts)</code> earlier that the sample names are not very descriptive (eg. 507-V, 1189-V etc.). These correspond to the <code>patient_code</code> column in the sample metadata table above.</p></li>
+<li><p>Below, we will replace these <code>patient_code</code> names in the gene counts with readable sample names so that the rest of the analysis is easier to interpret, especially when visualising the data.</p></li>
+<li><p>First, we create a new column in the <code>samples</code> metadata table, called <code>sample</code>, that will contain readable sample names (the <code>group</code> they are in followed by a number):</p></li>
+</ul>
+<pre class="r"><code>samples &lt;- samples %&gt;%
+  dplyr::mutate(sample = paste0(group, &quot;_&quot;, c(1:10, 1:44))) 
+
+rownames(samples) &lt;- samples$sample
+
+# Preview the samples table with the added column:
+samples %&gt;%
+  kable %&gt;%
+  kable_styling()</code></pre>
+<table class="table" style="margin-left: auto; margin-right: auto;">
+<thead>
+<tr>
+<th style="text-align:left;">
+</th>
+<th style="text-align:left;">
+patient_code
+</th>
+<th style="text-align:right;">
+age
+</th>
+<th style="text-align:left;">
+sex
+</th>
+<th style="text-align:left;">
+group
+</th>
+<th style="text-align:left;">
+geo_accession
+</th>
+<th style="text-align:left;">
+sample
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:left;">
+Healthy_1
+</td>
+<td style="text-align:left;">
+507-V
+</td>
+<td style="text-align:right;">
+53
+</td>
+<td style="text-align:left;">
+M
+</td>
+<td style="text-align:left;">
+Healthy
+</td>
+<td style="text-align:left;">
+GSM5218990
+</td>
+<td style="text-align:left;">
+Healthy_1
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Healthy_2
+</td>
+<td style="text-align:left;">
+1189-V
+</td>
+<td style="text-align:right;">
+57
+</td>
+<td style="text-align:left;">
+F
+</td>
+<td style="text-align:left;">
+Healthy
+</td>
+<td style="text-align:left;">
+GSM5218991
+</td>
+<td style="text-align:left;">
+Healthy_2
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Healthy_3
+</td>
+<td style="text-align:left;">
+1406-V
+</td>
+<td style="text-align:right;">
+61
+</td>
+<td style="text-align:left;">
+M
+</td>
+<td style="text-align:left;">
+Healthy
+</td>
+<td style="text-align:left;">
+GSM5218992
+</td>
+<td style="text-align:left;">
+Healthy_3
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Healthy_4
+</td>
+<td style="text-align:left;">
+1918-V
+</td>
+<td style="text-align:right;">
+56
+</td>
+<td style="text-align:left;">
+M
+</td>
+<td style="text-align:left;">
+Healthy
+</td>
+<td style="text-align:left;">
+GSM5218993
+</td>
+<td style="text-align:left;">
+Healthy_4
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Healthy_5
+</td>
+<td style="text-align:left;">
+1951-V
+</td>
+<td style="text-align:right;">
+57
+</td>
+<td style="text-align:left;">
+F
+</td>
+<td style="text-align:left;">
+Healthy
+</td>
+<td style="text-align:left;">
+GSM5218994
+</td>
+<td style="text-align:left;">
+Healthy_5
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Healthy_6
+</td>
+<td style="text-align:left;">
+1995-V
+</td>
+<td style="text-align:right;">
+55
+</td>
+<td style="text-align:left;">
+F
+</td>
+<td style="text-align:left;">
+Healthy
+</td>
+<td style="text-align:left;">
+GSM5218995
+</td>
+<td style="text-align:left;">
+Healthy_6
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Healthy_7
+</td>
+<td style="text-align:left;">
+2064-V
+</td>
+<td style="text-align:right;">
+55
+</td>
+<td style="text-align:left;">
+M
+</td>
+<td style="text-align:left;">
+Healthy
+</td>
+<td style="text-align:left;">
+GSM5218996
+</td>
+<td style="text-align:left;">
+Healthy_7
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Healthy_8
+</td>
+<td style="text-align:left;">
+3054-V
+</td>
+<td style="text-align:right;">
+60
+</td>
+<td style="text-align:left;">
+M
+</td>
+<td style="text-align:left;">
+Healthy
+</td>
+<td style="text-align:left;">
+GSM5218997
+</td>
+<td style="text-align:left;">
+Healthy_8
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Healthy_9
+</td>
+<td style="text-align:left;">
+3136-V
+</td>
+<td style="text-align:right;">
+51
+</td>
+<td style="text-align:left;">
+F
+</td>
+<td style="text-align:left;">
+Healthy
+</td>
+<td style="text-align:left;">
+GSM5218998
+</td>
+<td style="text-align:left;">
+Healthy_9
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Healthy_10
+</td>
+<td style="text-align:left;">
+3538-V
+</td>
+<td style="text-align:right;">
+60
+</td>
+<td style="text-align:left;">
+M
+</td>
+<td style="text-align:left;">
+Healthy
+</td>
+<td style="text-align:left;">
+GSM5218999
+</td>
+<td style="text-align:left;">
+Healthy_10
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Covid19_1
+</td>
+<td style="text-align:left;">
+002-0001
+</td>
+<td style="text-align:right;">
+51
+</td>
+<td style="text-align:left;">
+M
+</td>
+<td style="text-align:left;">
+Covid19
+</td>
+<td style="text-align:left;">
+GSM5219000
+</td>
+<td style="text-align:left;">
+Covid19_1
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Covid19_2
+</td>
+<td style="text-align:left;">
+002-0002
+</td>
+<td style="text-align:right;">
+60
+</td>
+<td style="text-align:left;">
+M
+</td>
+<td style="text-align:left;">
+Covid19
+</td>
+<td style="text-align:left;">
+GSM5219001
+</td>
+<td style="text-align:left;">
+Covid19_2
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Covid19_3
+</td>
+<td style="text-align:left;">
+002-0003
+</td>
+<td style="text-align:right;">
+53
+</td>
+<td style="text-align:left;">
+F
+</td>
+<td style="text-align:left;">
+Covid19
+</td>
+<td style="text-align:left;">
+GSM5219002
+</td>
+<td style="text-align:left;">
+Covid19_3
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Covid19_4
+</td>
+<td style="text-align:left;">
+002-0004
+</td>
+<td style="text-align:right;">
+57
+</td>
+<td style="text-align:left;">
+F
+</td>
+<td style="text-align:left;">
+Covid19
+</td>
+<td style="text-align:left;">
+GSM5219003
+</td>
+<td style="text-align:left;">
+Covid19_4
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Covid19_5
+</td>
+<td style="text-align:left;">
+002-0011
+</td>
+<td style="text-align:right;">
+58
+</td>
+<td style="text-align:left;">
+F
+</td>
+<td style="text-align:left;">
+Covid19
+</td>
+<td style="text-align:left;">
+GSM5219004
+</td>
+<td style="text-align:left;">
+Covid19_5
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Covid19_6
+</td>
+<td style="text-align:left;">
+002-0006
+</td>
+<td style="text-align:right;">
+55
+</td>
+<td style="text-align:left;">
+M
+</td>
+<td style="text-align:left;">
+Covid19
+</td>
+<td style="text-align:left;">
+GSM5219005
+</td>
+<td style="text-align:left;">
+Covid19_6
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Covid19_7
+</td>
+<td style="text-align:left;">
+002-0031
+</td>
+<td style="text-align:right;">
+53
+</td>
+<td style="text-align:left;">
+M
+</td>
+<td style="text-align:left;">
+Covid19
+</td>
+<td style="text-align:left;">
+GSM5219006
+</td>
+<td style="text-align:left;">
+Covid19_7
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Covid19_8
+</td>
+<td style="text-align:left;">
+001-0021
+</td>
+<td style="text-align:right;">
+52
+</td>
+<td style="text-align:left;">
+M
+</td>
+<td style="text-align:left;">
+Covid19
+</td>
+<td style="text-align:left;">
+GSM5219007
+</td>
+<td style="text-align:left;">
+Covid19_8
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Covid19_9
+</td>
+<td style="text-align:left;">
+001-0033
+</td>
+<td style="text-align:right;">
+60
+</td>
+<td style="text-align:left;">
+M
+</td>
+<td style="text-align:left;">
+Covid19
+</td>
+<td style="text-align:left;">
+GSM5219008
+</td>
+<td style="text-align:left;">
+Covid19_9
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Covid19_10
+</td>
+<td style="text-align:left;">
+001-0024
+</td>
+<td style="text-align:right;">
+61
+</td>
+<td style="text-align:left;">
+M
+</td>
+<td style="text-align:left;">
+Covid19
+</td>
+<td style="text-align:left;">
+GSM5219009
+</td>
+<td style="text-align:left;">
+Covid19_10
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Covid19_11
+</td>
+<td style="text-align:left;">
+001-0040
+</td>
+<td style="text-align:right;">
+58
+</td>
+<td style="text-align:left;">
+M
+</td>
+<td style="text-align:left;">
+Covid19
+</td>
+<td style="text-align:left;">
+GSM5219010
+</td>
+<td style="text-align:left;">
+Covid19_11
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Covid19_12
+</td>
+<td style="text-align:left;">
+001-0032
+</td>
+<td style="text-align:right;">
+59
+</td>
+<td style="text-align:left;">
+M
+</td>
+<td style="text-align:left;">
+Covid19
+</td>
+<td style="text-align:left;">
+GSM5219011
+</td>
+<td style="text-align:left;">
+Covid19_12
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Covid19_13
+</td>
+<td style="text-align:left;">
+001-0029
+</td>
+<td style="text-align:right;">
+61
+</td>
+<td style="text-align:left;">
+M
+</td>
+<td style="text-align:left;">
+Covid19
+</td>
+<td style="text-align:left;">
+GSM5219012
+</td>
+<td style="text-align:left;">
+Covid19_13
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Covid19_14
+</td>
+<td style="text-align:left;">
+002-0035
+</td>
+<td style="text-align:right;">
+51
+</td>
+<td style="text-align:left;">
+M
+</td>
+<td style="text-align:left;">
+Covid19
+</td>
+<td style="text-align:left;">
+GSM5219013
+</td>
+<td style="text-align:left;">
+Covid19_14
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Covid19_15
+</td>
+<td style="text-align:left;">
+002-0037
+</td>
+<td style="text-align:right;">
+55
+</td>
+<td style="text-align:left;">
+M
+</td>
+<td style="text-align:left;">
+Covid19
+</td>
+<td style="text-align:left;">
+GSM5219014
+</td>
+<td style="text-align:left;">
+Covid19_15
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Covid19_16
+</td>
+<td style="text-align:left;">
+001-0036
+</td>
+<td style="text-align:right;">
+59
+</td>
+<td style="text-align:left;">
+F
+</td>
+<td style="text-align:left;">
+Covid19
+</td>
+<td style="text-align:left;">
+GSM5219015
+</td>
+<td style="text-align:left;">
+Covid19_16
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Covid19_17
+</td>
+<td style="text-align:left;">
+002-0040
+</td>
+<td style="text-align:right;">
+55
+</td>
+<td style="text-align:left;">
+F
+</td>
+<td style="text-align:left;">
+Covid19
+</td>
+<td style="text-align:left;">
+GSM5219016
+</td>
+<td style="text-align:left;">
+Covid19_17
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Covid19_18
+</td>
+<td style="text-align:left;">
+002-0041
+</td>
+<td style="text-align:right;">
+57
+</td>
+<td style="text-align:left;">
+F
+</td>
+<td style="text-align:left;">
+Covid19
+</td>
+<td style="text-align:left;">
+GSM5219017
+</td>
+<td style="text-align:left;">
+Covid19_18
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Covid19_19
+</td>
+<td style="text-align:left;">
+002-0046
+</td>
+<td style="text-align:right;">
+60
+</td>
+<td style="text-align:left;">
+M
+</td>
+<td style="text-align:left;">
+Covid19
+</td>
+<td style="text-align:left;">
+GSM5219018
+</td>
+<td style="text-align:left;">
+Covid19_19
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Covid19_20
+</td>
+<td style="text-align:left;">
+002-0053
+</td>
+<td style="text-align:right;">
+55
+</td>
+<td style="text-align:left;">
+M
+</td>
+<td style="text-align:left;">
+Covid19
+</td>
+<td style="text-align:left;">
+GSM5219019
+</td>
+<td style="text-align:left;">
+Covid19_20
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Covid19_21
+</td>
+<td style="text-align:left;">
+001-0068
+</td>
+<td style="text-align:right;">
+56
+</td>
+<td style="text-align:left;">
+M
+</td>
+<td style="text-align:left;">
+Covid19
+</td>
+<td style="text-align:left;">
+GSM5219020
+</td>
+<td style="text-align:left;">
+Covid19_21
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Covid19_22
+</td>
+<td style="text-align:left;">
+002-0057
+</td>
+<td style="text-align:right;">
+51
+</td>
+<td style="text-align:left;">
+M
+</td>
+<td style="text-align:left;">
+Covid19
+</td>
+<td style="text-align:left;">
+GSM5219021
+</td>
+<td style="text-align:left;">
+Covid19_22
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Covid19_23
+</td>
+<td style="text-align:left;">
+002-0058
+</td>
+<td style="text-align:right;">
+57
+</td>
+<td style="text-align:left;">
+M
+</td>
+<td style="text-align:left;">
+Covid19
+</td>
+<td style="text-align:left;">
+GSM5219022
+</td>
+<td style="text-align:left;">
+Covid19_23
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Covid19_24
+</td>
+<td style="text-align:left;">
+002-0060
+</td>
+<td style="text-align:right;">
+53
+</td>
+<td style="text-align:left;">
+M
+</td>
+<td style="text-align:left;">
+Covid19
+</td>
+<td style="text-align:left;">
+GSM5219023
+</td>
+<td style="text-align:left;">
+Covid19_24
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Covid19_25
+</td>
+<td style="text-align:left;">
+001-0094
+</td>
+<td style="text-align:right;">
+60
+</td>
+<td style="text-align:left;">
+M
+</td>
+<td style="text-align:left;">
+Covid19
+</td>
+<td style="text-align:left;">
+GSM5219024
+</td>
+<td style="text-align:left;">
+Covid19_25
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Covid19_26
+</td>
+<td style="text-align:left;">
+002-0062
+</td>
+<td style="text-align:right;">
+55
+</td>
+<td style="text-align:left;">
+M
+</td>
+<td style="text-align:left;">
+Covid19
+</td>
+<td style="text-align:left;">
+GSM5219025
+</td>
+<td style="text-align:left;">
+Covid19_26
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Covid19_27
+</td>
+<td style="text-align:left;">
+002-0061
+</td>
+<td style="text-align:right;">
+57
+</td>
+<td style="text-align:left;">
+M
+</td>
+<td style="text-align:left;">
+Covid19
+</td>
+<td style="text-align:left;">
+GSM5219026
+</td>
+<td style="text-align:left;">
+Covid19_27
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Covid19_28
+</td>
+<td style="text-align:left;">
+002-0068
+</td>
+<td style="text-align:right;">
+53
+</td>
+<td style="text-align:left;">
+M
+</td>
+<td style="text-align:left;">
+Covid19
+</td>
+<td style="text-align:left;">
+GSM5219027
+</td>
+<td style="text-align:left;">
+Covid19_28
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Covid19_29
+</td>
+<td style="text-align:left;">
+002-0067
+</td>
+<td style="text-align:right;">
+55
+</td>
+<td style="text-align:left;">
+M
+</td>
+<td style="text-align:left;">
+Covid19
+</td>
+<td style="text-align:left;">
+GSM5219028
+</td>
+<td style="text-align:left;">
+Covid19_29
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Covid19_30
+</td>
+<td style="text-align:left;">
+002-0066
+</td>
+<td style="text-align:right;">
+51
+</td>
+<td style="text-align:left;">
+M
+</td>
+<td style="text-align:left;">
+Covid19
+</td>
+<td style="text-align:left;">
+GSM5219029
+</td>
+<td style="text-align:left;">
+Covid19_30
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Covid19_31
+</td>
+<td style="text-align:left;">
+002-0064
+</td>
+<td style="text-align:right;">
+52
+</td>
+<td style="text-align:left;">
+M
+</td>
+<td style="text-align:left;">
+Covid19
+</td>
+<td style="text-align:left;">
+GSM5219030
+</td>
+<td style="text-align:left;">
+Covid19_31
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Covid19_32
+</td>
+<td style="text-align:left;">
+002-0070
+</td>
+<td style="text-align:right;">
+58
+</td>
+<td style="text-align:left;">
+M
+</td>
+<td style="text-align:left;">
+Covid19
+</td>
+<td style="text-align:left;">
+GSM5219031
+</td>
+<td style="text-align:left;">
+Covid19_32
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Covid19_33
+</td>
+<td style="text-align:left;">
+002-0072
+</td>
+<td style="text-align:right;">
+57
+</td>
+<td style="text-align:left;">
+M
+</td>
+<td style="text-align:left;">
+Covid19
+</td>
+<td style="text-align:left;">
+GSM5219032
+</td>
+<td style="text-align:left;">
+Covid19_33
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Covid19_34
+</td>
+<td style="text-align:left;">
+001-0129
+</td>
+<td style="text-align:right;">
+56
+</td>
+<td style="text-align:left;">
+M
+</td>
+<td style="text-align:left;">
+Covid19
+</td>
+<td style="text-align:left;">
+GSM5219033
+</td>
+<td style="text-align:left;">
+Covid19_34
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Covid19_35
+</td>
+<td style="text-align:left;">
+002-0078
+</td>
+<td style="text-align:right;">
+55
+</td>
+<td style="text-align:left;">
+M
+</td>
+<td style="text-align:left;">
+Covid19
+</td>
+<td style="text-align:left;">
+GSM5219034
+</td>
+<td style="text-align:left;">
+Covid19_35
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Covid19_36
+</td>
+<td style="text-align:left;">
+002-0080
+</td>
+<td style="text-align:right;">
+55
+</td>
+<td style="text-align:left;">
+M
+</td>
+<td style="text-align:left;">
+Covid19
+</td>
+<td style="text-align:left;">
+GSM5219035
+</td>
+<td style="text-align:left;">
+Covid19_36
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Covid19_37
+</td>
+<td style="text-align:left;">
+002-0079
+</td>
+<td style="text-align:right;">
+59
+</td>
+<td style="text-align:left;">
+M
+</td>
+<td style="text-align:left;">
+Covid19
+</td>
+<td style="text-align:left;">
+GSM5219036
+</td>
+<td style="text-align:left;">
+Covid19_37
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Covid19_38
+</td>
+<td style="text-align:left;">
+002-0083
+</td>
+<td style="text-align:right;">
+54
+</td>
+<td style="text-align:left;">
+M
+</td>
+<td style="text-align:left;">
+Covid19
+</td>
+<td style="text-align:left;">
+GSM5219037
+</td>
+<td style="text-align:left;">
+Covid19_38
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Covid19_39
+</td>
+<td style="text-align:left;">
+002-0084
+</td>
+<td style="text-align:right;">
+59
+</td>
+<td style="text-align:left;">
+M
+</td>
+<td style="text-align:left;">
+Covid19
+</td>
+<td style="text-align:left;">
+GSM5219038
+</td>
+<td style="text-align:left;">
+Covid19_39
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Covid19_40
+</td>
+<td style="text-align:left;">
+001-0142
+</td>
+<td style="text-align:right;">
+53
+</td>
+<td style="text-align:left;">
+M
+</td>
+<td style="text-align:left;">
+Covid19
+</td>
+<td style="text-align:left;">
+GSM5219039
+</td>
+<td style="text-align:left;">
+Covid19_40
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Covid19_41
+</td>
+<td style="text-align:left;">
+002-0088
+</td>
+<td style="text-align:right;">
+61
+</td>
+<td style="text-align:left;">
+M
+</td>
+<td style="text-align:left;">
+Covid19
+</td>
+<td style="text-align:left;">
+GSM5219040
+</td>
+<td style="text-align:left;">
+Covid19_41
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Covid19_42
+</td>
+<td style="text-align:left;">
+002-0101
+</td>
+<td style="text-align:right;">
+58
+</td>
+<td style="text-align:left;">
+M
+</td>
+<td style="text-align:left;">
+Covid19
+</td>
+<td style="text-align:left;">
+GSM5219041
+</td>
+<td style="text-align:left;">
+Covid19_42
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Covid19_43
+</td>
+<td style="text-align:left;">
+002-0104
+</td>
+<td style="text-align:right;">
+58
+</td>
+<td style="text-align:left;">
+M
+</td>
+<td style="text-align:left;">
+Covid19
+</td>
+<td style="text-align:left;">
+GSM5219042
+</td>
+<td style="text-align:left;">
+Covid19_43
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Covid19_44
+</td>
+<td style="text-align:left;">
+051-0001
+</td>
+<td style="text-align:right;">
+54
+</td>
+<td style="text-align:left;">
+M
+</td>
+<td style="text-align:left;">
+Covid19
+</td>
+<td style="text-align:left;">
+GSM5219043
+</td>
+<td style="text-align:left;">
+Covid19_44
+</td>
+</tr>
+</tbody>
+</table>
+<ul>
+<li>We will then set the column names in <code>counts</code> (corresponding to sample names) to the new readable sample names:</li>
+</ul>
+<pre class="r"><code># Reorder the columns in `counts` so they are in the same order as the rows in the samples table
+counts &lt;- counts[, samples$patient_code] 
+
+# Set the colnames to the readable sample names
+colnames(counts) &lt;- samples$sample 
+
+head(counts)</code></pre>
+<pre><code>        Healthy_1 Healthy_2 Healthy_3 Healthy_4 Healthy_5 Healthy_6 Healthy_7
+A1BG    133.14360 110.14223  94.68670  89.60004  85.81497  59.03335  77.18392
+A1CF      9.00000   8.00000   1.00000  10.00020   3.00000   6.00000   4.00000
+A2M      65.00001  31.72058  36.63567  19.22508  27.99998  40.60307  34.00003
+A2ML1    29.28124  26.30470  20.57935  13.00000   5.00000  39.47160   8.13204
+A2MP1   262.00034  83.00004  98.99997  55.99998  41.00000 124.99995  49.00002
+A3GALT2  12.00000   1.00000   5.00000   7.00000   0.00000   1.00000   5.00000
+        Healthy_8 Healthy_9 Healthy_10 Covid19_1 Covid19_2 Covid19_3 Covid19_4
+A1BG     64.63351 118.31709   79.67834  83.26880 137.55230  68.16603  78.88510
+A1CF      5.00000   6.00000    0.00000  16.00040   5.00324  12.00600   6.00000
+A2M      31.56285  24.00001   28.00001  26.99995  38.00004  46.00000  21.99862
+A2ML1    20.04058  31.02818   51.08296  57.80256  30.37114  33.68818  22.34460
+A2MP1    56.99999  97.00004   45.00000   3.00000  56.00000  20.00000  22.00000
+A3GALT2   0.00000   4.00000    0.00000   9.00000   5.00000  29.00000   0.00000
+        Covid19_5 Covid19_6 Covid19_7 Covid19_8 Covid19_9 Covid19_10 Covid19_11
+A1BG    114.23320  64.64760  53.95959 83.450900  74.57600   64.24903   92.80190
+A1CF     11.00000   8.00000   6.00013  2.999998   6.00000    4.00000    5.00007
+A2M      45.00001  67.00005  29.99999 25.999970  41.99999   39.00004   37.39638
+A2ML1    45.79115  21.32390  31.66436 37.455300  42.54337   28.32695   29.74667
+A2MP1    18.00004  22.99996  26.99999 44.000048  40.99998   25.00004  105.99995
+A3GALT2  11.00000   1.00000   2.00000  2.000000   3.00000    5.00000    3.00000
+        Covid19_12 Covid19_13 Covid19_14 Covid19_15 Covid19_16 Covid19_17
+A1BG     59.465400   73.44665   47.97373   57.19031   64.57860   89.05430
+A1CF      3.000027    6.00187    6.00000    1.00107   10.00000    2.00727
+A2M      45.000016   30.00002   51.99996  129.00001   46.00005   84.00001
+A2ML1    16.849970   20.70310   30.61882   25.00652   29.80826   69.83409
+A2MP1    88.999980   56.00000   35.99997   12.00000   54.99995   14.00000
+A3GALT2   0.000000    5.00000    5.00000    1.00000    7.00000    9.00000
+        Covid19_18 Covid19_19 Covid19_20 Covid19_21 Covid19_22 Covid19_23
+A1BG      48.00094  79.154480   71.01173   50.83940   85.36085   93.90937
+A1CF      11.00000   8.003561   10.00780    3.00000    1.00000    5.00607
+A2M       60.49292  29.999997   48.00000   38.99996   27.00002   53.00000
+A2ML1     31.87888  33.128400   29.33900   21.56825   31.68098   13.08699
+A2MP1     38.00002  40.999970   18.00001    7.00000    6.00000   33.00003
+A3GALT2    2.00000   1.000000    6.00000   10.00000    4.00000    6.00000
+        Covid19_24 Covid19_25 Covid19_26 Covid19_27 Covid19_28 Covid19_29
+A1BG      73.99996   88.82890   75.26563   71.68710  124.19999   79.64403
+A1CF       5.00323    1.00124    5.00000    7.00000    6.00007    5.00369
+A2M       28.00001   99.99995   60.99995   47.99997   47.99996   73.00000
+A2ML1     67.26220   18.74255   44.07126   73.17947   16.01840   56.59880
+A2MP1     77.99996   33.00003   15.99998   12.99996   19.99999   14.00000
+A3GALT2   16.00000    0.00000    7.00000    9.00000    3.00000   17.00000
+        Covid19_30 Covid19_31 Covid19_32 Covid19_33 Covid19_34 Covid19_35
+A1BG      60.10780   64.65766   61.99567   71.27866   63.87714   54.11832
+A1CF       6.00000    7.00000   15.00040    3.00501    2.00048    6.00473
+A2M       17.25811   20.00000   32.99999   27.99999   28.99995   16.99998
+A2ML1     84.14297   29.39331   37.07064   19.60490   36.41428   33.22690
+A2MP1     26.00000   15.00000   11.00001   41.00004   12.00000    8.00000
+A3GALT2   71.00000    7.00000   17.00000   18.00000   11.00000   49.00000
+        Covid19_36 Covid19_37 Covid19_38 Covid19_39 Covid19_40 Covid19_41
+A1BG      61.43464   90.23180  116.96380  104.56376  134.22198   51.22791
+A1CF      13.00020    2.00002   13.00490    9.00014   16.00240    6.00000
+A2M       29.00002   57.00001   35.99996   57.00004   25.00001   62.99998
+A2ML1     54.13332   65.73852   75.60080   51.43706   66.83647   30.94580
+A2MP1     12.00000   29.99997   96.00001   29.99998   66.99996   20.99998
+A3GALT2   14.00000   13.00000   40.00000   44.00000   44.00000   30.00000
+        Covid19_42 Covid19_43 Covid19_44
+A1BG     71.184132   79.81150   78.14628
+A1CF      8.002895    5.00104    8.00000
+A2M      21.000028   12.00000   19.99997
+A2ML1    33.123070   38.82977   49.44860
+A2MP1     6.000000   14.99997   21.99996
+A3GALT2   5.000000   21.00000    6.00000</code></pre>
+</div>
+</div>
+<div id="gene-annotations" class="section level2">
+<h2>Gene annotations</h2>
+<ul>
+<li><p>Gene annotations are useful for later interpreting the results of the differential gene expression analysis. They give information about genes, including genomic location (e.g. start and end coordinates), descriptions, type of gene (e.g. whether it’s a non-coding or protein-coding gene) etc.</p></li>
+<li><p>Below, we retrieve gene annotation metadata from the Ensembl database (this step can take a while to run if running <code>AnnotationHub</code> for the first time, so I have saved out the <code>genes</code> object as an R object).</p></li>
+</ul>
+<pre class="r"><code># Below is not run in this RMarkdown document:
+
+# Load annotation hub
+ah &lt;- AnnotationHub()
+
+# Search for the correct Ensembl gene annotation
+ah %&gt;%
+  subset(grepl(&quot;sapiens&quot;, species)) %&gt;%
+  subset(rdataclass == &quot;EnsDb&quot;)
+
+ensDb &lt;- ah[[&quot;AH78783&quot;]]
+
+# Get gene annotations
+genes &lt;- genes(ensDb) %&gt;%
+  as.data.frame
+
+# genes %&gt;% saveRDS(here(&quot;data&quot;, &quot;R&quot;, &quot;genes.rds&quot;))</code></pre>
+<pre class="r"><code># I load in a saved version below since the above code can take a while to run 
+# if AnnotationHub objects are not already pre-downloaded. 
+genes &lt;- readRDS(here(&quot;data&quot;, &quot;R&quot;, &quot;genes.rds&quot;))</code></pre>
+<ul>
+<li>The <code>genes</code> data.frame is prepared so that the <code>row.names</code> (corresponding to Ensembl gene IDs) are in the same order as for the gene count matrix stored in <code>counts</code>.</li>
+</ul>
+<pre class="r"><code>genes &lt;- data.frame(gene = rownames(counts)) %&gt;%
+  left_join(genes %&gt;% as.data.frame, 
+            by = c(&quot;gene&quot;=&quot;symbol&quot;)) %&gt;%
+  dplyr::distinct(gene, .keep_all=TRUE) 
+
+rownames(genes) &lt;- genes$gene</code></pre>
+<ul>
+<li>From previewing the gene annotations below, we can see that each row is a gene and each column contains information about the gene.</li>
+</ul>
+<pre class="r"><code>genes %&gt;%
+  head(50) %&gt;%
+  kable %&gt;%
+  kable_styling %&gt;%
+  scroll_box(height = &quot;600px&quot;)</code></pre>
+<div style="border: 1px solid #ddd; padding: 0px; overflow-y: scroll; height:600px; ">
+<table class="table" style="margin-left: auto; margin-right: auto;">
+<thead>
+<tr>
+<th style="text-align:left;position: sticky; top:0; background-color: #FFFFFF;">
+</th>
+<th style="text-align:left;position: sticky; top:0; background-color: #FFFFFF;">
+gene
+</th>
+<th style="text-align:left;position: sticky; top:0; background-color: #FFFFFF;">
+seqnames
+</th>
+<th style="text-align:right;position: sticky; top:0; background-color: #FFFFFF;">
+start
+</th>
+<th style="text-align:right;position: sticky; top:0; background-color: #FFFFFF;">
+end
+</th>
+<th style="text-align:right;position: sticky; top:0; background-color: #FFFFFF;">
+width
+</th>
+<th style="text-align:left;position: sticky; top:0; background-color: #FFFFFF;">
+strand
+</th>
+<th style="text-align:left;position: sticky; top:0; background-color: #FFFFFF;">
+gene_id
+</th>
+<th style="text-align:left;position: sticky; top:0; background-color: #FFFFFF;">
+gene_name
+</th>
+<th style="text-align:left;position: sticky; top:0; background-color: #FFFFFF;">
+gene_biotype
+</th>
+<th style="text-align:left;position: sticky; top:0; background-color: #FFFFFF;">
+seq_coord_system
+</th>
+<th style="text-align:left;position: sticky; top:0; background-color: #FFFFFF;">
+description
+</th>
+<th style="text-align:left;position: sticky; top:0; background-color: #FFFFFF;">
+gene_id_version
+</th>
+<th style="text-align:left;position: sticky; top:0; background-color: #FFFFFF;">
+entrezid
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:left;">
+A1BG
+</td>
+<td style="text-align:left;">
+A1BG
+</td>
+<td style="text-align:left;">
+19
+</td>
+<td style="text-align:right;">
+58345178
+</td>
+<td style="text-align:right;">
+58353492
+</td>
+<td style="text-align:right;">
+8315
+</td>
+<td style="text-align:left;">
+<ul>
+<li></td>
+<td style="text-align:left;">
+<p>ENSG00000121410</p>
+</td>
+<td style="text-align:left;">
+<p>A1BG</p>
+</td>
+<td style="text-align:left;">
+<p>protein_coding</p>
+</td>
+<td style="text-align:left;">
+<p>chromosome</p>
+</td>
+<td style="text-align:left;">
+<p>alpha-1-B glycoprotein [Source:HGNC Symbol;Acc:HGNC:5]</p>
+</td>
+<td style="text-align:left;">
+<p>ENSG00000121410.12</p>
+</td>
+<td style="text-align:left;">
+<p>1</p>
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+<p>A1CF</p>
+</td>
+<td style="text-align:left;">
+<p>A1CF</p>
+</td>
+<td style="text-align:left;">
+<p>10</p>
+</td>
+<td style="text-align:right;">
+<p>50799409</p>
+</td>
+<td style="text-align:right;">
+<p>50885675</p>
+</td>
+<td style="text-align:right;">
+<p>86267</p>
+</td>
+<td style="text-align:left;">
+<ul>
+<li></td>
+<td style="text-align:left;">
+ENSG00000148584
+</td>
+<td style="text-align:left;">
+A1CF
+</td>
+<td style="text-align:left;">
+protein_coding
+</td>
+<td style="text-align:left;">
+chromosome
+</td>
+<td style="text-align:left;">
+APOBEC1 complementation factor [Source:HGNC Symbol;Acc:HGNC:24086]
+</td>
+<td style="text-align:left;">
+ENSG00000148584.15
+</td>
+<td style="text-align:left;">
+29974
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+A2M
+</td>
+<td style="text-align:left;">
+A2M
+</td>
+<td style="text-align:left;">
+12
+</td>
+<td style="text-align:right;">
+9067664
+</td>
+<td style="text-align:right;">
+9116229
+</td>
+<td style="text-align:right;">
+48566
+</td>
+<td style="text-align:left;">
+<ul>
+<li></td>
+<td style="text-align:left;">
+ENSG00000175899
+</td>
+<td style="text-align:left;">
+A2M
+</td>
+<td style="text-align:left;">
+protein_coding
+</td>
+<td style="text-align:left;">
+chromosome
+</td>
+<td style="text-align:left;">
+alpha-2-macroglobulin [Source:HGNC Symbol;Acc:HGNC:7]
+</td>
+<td style="text-align:left;">
+ENSG00000175899.14
+</td>
+<td style="text-align:left;">
+2
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+A2ML1
+</td>
+<td style="text-align:left;">
+A2ML1
+</td>
+<td style="text-align:left;">
+12
+</td>
+<td style="text-align:right;">
+8822621
+</td>
+<td style="text-align:right;">
+8887001
+</td>
+<td style="text-align:right;">
+64381
+</td>
+<td style="text-align:left;">
+<ul>
+<li></td>
+<td style="text-align:left;">
+ENSG00000166535
+</td>
+<td style="text-align:left;">
+A2ML1
+</td>
+<td style="text-align:left;">
+protein_coding
+</td>
+<td style="text-align:left;">
+chromosome
+</td>
+<td style="text-align:left;">
+alpha-2-macroglobulin like 1 [Source:HGNC Symbol;Acc:HGNC:23336]
+</td>
+<td style="text-align:left;">
+ENSG00000166535.20
+</td>
+<td style="text-align:left;">
+144568
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+A2MP1
+</td>
+<td style="text-align:left;">
+A2MP1
+</td>
+<td style="text-align:left;">
+12
+</td>
+<td style="text-align:right;">
+9228533
+</td>
+<td style="text-align:right;">
+9275817
+</td>
+<td style="text-align:right;">
+47285
+</td>
+<td style="text-align:left;">
+<ul>
+<li></td>
+<td style="text-align:left;">
+ENSG00000256069
+</td>
+<td style="text-align:left;">
+A2MP1
+</td>
+<td style="text-align:left;">
+transcribed_unprocessed_pseudogene
+</td>
+<td style="text-align:left;">
+chromosome
+</td>
+<td style="text-align:left;">
+alpha-2-macroglobulin pseudogene 1 [Source:HGNC Symbol;Acc:HGNC:8]
+</td>
+<td style="text-align:left;">
+ENSG00000256069.7
+</td>
+<td style="text-align:left;">
+NA
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+A3GALT2
+</td>
+<td style="text-align:left;">
+A3GALT2
+</td>
+<td style="text-align:left;">
+1
+</td>
+<td style="text-align:right;">
+33306766
+</td>
+<td style="text-align:right;">
+33321098
+</td>
+<td style="text-align:right;">
+14333
+</td>
+<td style="text-align:left;">
+<ul>
+<li></td>
+<td style="text-align:left;">
+ENSG00000184389
+</td>
+<td style="text-align:left;">
+A3GALT2
+</td>
+<td style="text-align:left;">
+protein_coding
+</td>
+<td style="text-align:left;">
+chromosome
+</td>
+<td style="text-align:left;">
+alpha 1,3-galactosyltransferase 2 [Source:HGNC Symbol;Acc:HGNC:30005]
+</td>
+<td style="text-align:left;">
+ENSG00000184389.9
+</td>
+<td style="text-align:left;">
+127550
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+A4GALT
+</td>
+<td style="text-align:left;">
+A4GALT
+</td>
+<td style="text-align:left;">
+22
+</td>
+<td style="text-align:right;">
+42692121
+</td>
+<td style="text-align:right;">
+42721298
+</td>
+<td style="text-align:right;">
+29178
+</td>
+<td style="text-align:left;">
+<ul>
+<li></td>
+<td style="text-align:left;">
+ENSG00000128274
+</td>
+<td style="text-align:left;">
+A4GALT
+</td>
+<td style="text-align:left;">
+protein_coding
+</td>
+<td style="text-align:left;">
+chromosome
+</td>
+<td style="text-align:left;">
+alpha 1,4-galactosyltransferase (P blood group) [Source:HGNC Symbol;Acc:HGNC:18149]
+</td>
+<td style="text-align:left;">
+ENSG00000128274.17
+</td>
+<td style="text-align:left;">
+53947
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+A4GNT
+</td>
+<td style="text-align:left;">
+A4GNT
+</td>
+<td style="text-align:left;">
+3
+</td>
+<td style="text-align:right;">
+138123713
+</td>
+<td style="text-align:right;">
+138132390
+</td>
+<td style="text-align:right;">
+8678
+</td>
+<td style="text-align:left;">
+<ul>
+<li></td>
+<td style="text-align:left;">
+ENSG00000118017
+</td>
+<td style="text-align:left;">
+A4GNT
+</td>
+<td style="text-align:left;">
+protein_coding
+</td>
+<td style="text-align:left;">
+chromosome
+</td>
+<td style="text-align:left;">
+alpha-1,4-N-acetylglucosaminyltransferase [Source:HGNC Symbol;Acc:HGNC:17968]
+</td>
+<td style="text-align:left;">
+ENSG00000118017.4
+</td>
+<td style="text-align:left;">
+51146
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+AAAS
+</td>
+<td style="text-align:left;">
+AAAS
+</td>
+<td style="text-align:left;">
+12
+</td>
+<td style="text-align:right;">
+53307456
+</td>
+<td style="text-align:right;">
+53324864
+</td>
+<td style="text-align:right;">
+17409
+</td>
+<td style="text-align:left;">
+<ul>
+<li></td>
+<td style="text-align:left;">
+ENSG00000094914
+</td>
+<td style="text-align:left;">
+AAAS
+</td>
+<td style="text-align:left;">
+protein_coding
+</td>
+<td style="text-align:left;">
+chromosome
+</td>
+<td style="text-align:left;">
+aladin WD repeat nucleoporin [Source:HGNC Symbol;Acc:HGNC:13666]
+</td>
+<td style="text-align:left;">
+ENSG00000094914.14
+</td>
+<td style="text-align:left;">
+8086
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+AACS
+</td>
+<td style="text-align:left;">
+AACS
+</td>
+<td style="text-align:left;">
+12
+</td>
+<td style="text-align:right;">
+125065434
+</td>
+<td style="text-align:right;">
+125143333
+</td>
+<td style="text-align:right;">
+77900
+</td>
+<td style="text-align:left;">
+<ul>
+<li></td>
+<td style="text-align:left;">
+ENSG00000081760
+</td>
+<td style="text-align:left;">
+AACS
+</td>
+<td style="text-align:left;">
+protein_coding
+</td>
+<td style="text-align:left;">
+chromosome
+</td>
+<td style="text-align:left;">
+acetoacetyl-CoA synthetase [Source:HGNC Symbol;Acc:HGNC:21298]
+</td>
+<td style="text-align:left;">
+ENSG00000081760.17
+</td>
+<td style="text-align:left;">
+65985
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+AACSP1
+</td>
+<td style="text-align:left;">
+AACSP1
+</td>
+<td style="text-align:left;">
+5
+</td>
+<td style="text-align:right;">
+178764861
+</td>
+<td style="text-align:right;">
+178818435
+</td>
+<td style="text-align:right;">
+53575
+</td>
+<td style="text-align:left;">
+<ul>
+<li></td>
+<td style="text-align:left;">
+ENSG00000250420
+</td>
+<td style="text-align:left;">
+AACSP1
+</td>
+<td style="text-align:left;">
+transcribed_unprocessed_pseudogene
+</td>
+<td style="text-align:left;">
+chromosome
+</td>
+<td style="text-align:left;">
+acetoacetyl-CoA synthetase pseudogene 1 [Source:HGNC Symbol;Acc:HGNC:18226]
+</td>
+<td style="text-align:left;">
+ENSG00000250420.8
+</td>
+<td style="text-align:left;">
+NA
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+AADAC
+</td>
+<td style="text-align:left;">
+AADAC
+</td>
+<td style="text-align:left;">
+3
+</td>
+<td style="text-align:right;">
+151814073
+</td>
+<td style="text-align:right;">
+151828488
+</td>
+<td style="text-align:right;">
+14416
+</td>
+<td style="text-align:left;">
+<ul>
+<li></td>
+<td style="text-align:left;">
+ENSG00000114771
+</td>
+<td style="text-align:left;">
+AADAC
+</td>
+<td style="text-align:left;">
+protein_coding
+</td>
+<td style="text-align:left;">
+chromosome
+</td>
+<td style="text-align:left;">
+arylacetamide deacetylase [Source:HGNC Symbol;Acc:HGNC:17]
+</td>
+<td style="text-align:left;">
+ENSG00000114771.14
+</td>
+<td style="text-align:left;">
+13
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+AADACL2
+</td>
+<td style="text-align:left;">
+AADACL2
+</td>
+<td style="text-align:left;">
+3
+</td>
+<td style="text-align:right;">
+151733916
+</td>
+<td style="text-align:right;">
+151761339
+</td>
+<td style="text-align:right;">
+27424
+</td>
+<td style="text-align:left;">
+<ul>
+<li></td>
+<td style="text-align:left;">
+ENSG00000197953
+</td>
+<td style="text-align:left;">
+AADACL2
+</td>
+<td style="text-align:left;">
+protein_coding
+</td>
+<td style="text-align:left;">
+chromosome
+</td>
+<td style="text-align:left;">
+arylacetamide deacetylase like 2 [Source:HGNC Symbol;Acc:HGNC:24427]
+</td>
+<td style="text-align:left;">
+ENSG00000197953.6
+</td>
+<td style="text-align:left;">
+344752
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+AADACL3
+</td>
+<td style="text-align:left;">
+AADACL3
+</td>
+<td style="text-align:left;">
+1
+</td>
+<td style="text-align:right;">
+12716110
+</td>
+<td style="text-align:right;">
+12728760
+</td>
+<td style="text-align:right;">
+12651
+</td>
+<td style="text-align:left;">
+<ul>
+<li></td>
+<td style="text-align:left;">
+ENSG00000188984
+</td>
+<td style="text-align:left;">
+AADACL3
+</td>
+<td style="text-align:left;">
+protein_coding
+</td>
+<td style="text-align:left;">
+chromosome
+</td>
+<td style="text-align:left;">
+arylacetamide deacetylase like 3 [Source:HGNC Symbol;Acc:HGNC:32037]
+</td>
+<td style="text-align:left;">
+ENSG00000188984.12
+</td>
+<td style="text-align:left;">
+126767
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+AADACL4
+</td>
+<td style="text-align:left;">
+AADACL4
+</td>
+<td style="text-align:left;">
+1
+</td>
+<td style="text-align:right;">
+12644547
+</td>
+<td style="text-align:right;">
+12667086
+</td>
+<td style="text-align:right;">
+22540
+</td>
+<td style="text-align:left;">
+<ul>
+<li></td>
+<td style="text-align:left;">
+ENSG00000204518
+</td>
+<td style="text-align:left;">
+AADACL4
+</td>
+<td style="text-align:left;">
+protein_coding
+</td>
+<td style="text-align:left;">
+chromosome
+</td>
+<td style="text-align:left;">
+arylacetamide deacetylase like 4 [Source:HGNC Symbol;Acc:HGNC:32038]
+</td>
+<td style="text-align:left;">
+ENSG00000204518.2
+</td>
+<td style="text-align:left;">
+343066
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+AADACP1
+</td>
+<td style="text-align:left;">
+AADACP1
+</td>
+<td style="text-align:left;">
+3
+</td>
+<td style="text-align:right;">
+151770428
+</td>
+<td style="text-align:right;">
+151784894
+</td>
+<td style="text-align:right;">
+14467
+</td>
+<td style="text-align:left;">
+<ul>
+<li></td>
+<td style="text-align:left;">
+ENSG00000240602
+</td>
+<td style="text-align:left;">
+AADACP1
+</td>
+<td style="text-align:left;">
+transcribed_unprocessed_pseudogene
+</td>
+<td style="text-align:left;">
+chromosome
+</td>
+<td style="text-align:left;">
+arylacetamide deacetylase pseudogene 1 [Source:HGNC Symbol;Acc:HGNC:50305]
+</td>
+<td style="text-align:left;">
+ENSG00000240602.7
+</td>
+<td style="text-align:left;">
+NA
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+AADAT
+</td>
+<td style="text-align:left;">
+AADAT
+</td>
+<td style="text-align:left;">
+4
+</td>
+<td style="text-align:right;">
+170060222
+</td>
+<td style="text-align:right;">
+170091699
+</td>
+<td style="text-align:right;">
+31478
+</td>
+<td style="text-align:left;">
+<ul>
+<li></td>
+<td style="text-align:left;">
+ENSG00000109576
+</td>
+<td style="text-align:left;">
+AADAT
+</td>
+<td style="text-align:left;">
+protein_coding
+</td>
+<td style="text-align:left;">
+chromosome
+</td>
+<td style="text-align:left;">
+aminoadipate aminotransferase [Source:HGNC Symbol;Acc:HGNC:17929]
+</td>
+<td style="text-align:left;">
+ENSG00000109576.14
+</td>
+<td style="text-align:left;">
+51166
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+AAGAB
+</td>
+<td style="text-align:left;">
+AAGAB
+</td>
+<td style="text-align:left;">
+15
+</td>
+<td style="text-align:right;">
+67200667
+</td>
+<td style="text-align:right;">
+67255195
+</td>
+<td style="text-align:right;">
+54529
+</td>
+<td style="text-align:left;">
+<ul>
+<li></td>
+<td style="text-align:left;">
+ENSG00000103591
+</td>
+<td style="text-align:left;">
+AAGAB
+</td>
+<td style="text-align:left;">
+protein_coding
+</td>
+<td style="text-align:left;">
+chromosome
+</td>
+<td style="text-align:left;">
+alpha and gamma adaptin binding protein [Source:HGNC Symbol;Acc:HGNC:25662]
+</td>
+<td style="text-align:left;">
+ENSG00000103591.13
+</td>
+<td style="text-align:left;">
+79719
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+AAK1
+</td>
+<td style="text-align:left;">
+AAK1
+</td>
+<td style="text-align:left;">
+2
+</td>
+<td style="text-align:right;">
+69457997
+</td>
+<td style="text-align:right;">
+69674349
+</td>
+<td style="text-align:right;">
+216353
+</td>
+<td style="text-align:left;">
+<ul>
+<li></td>
+<td style="text-align:left;">
+ENSG00000115977
+</td>
+<td style="text-align:left;">
+AAK1
+</td>
+<td style="text-align:left;">
+protein_coding
+</td>
+<td style="text-align:left;">
+chromosome
+</td>
+<td style="text-align:left;">
+AP2 associated kinase 1 [Source:HGNC Symbol;Acc:HGNC:19679]
+</td>
+<td style="text-align:left;">
+ENSG00000115977.19
+</td>
+<td style="text-align:left;">
+22848
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+AAMDC
+</td>
+<td style="text-align:left;">
+AAMDC
+</td>
+<td style="text-align:left;">
+11
+</td>
+<td style="text-align:right;">
+77821109
+</td>
+<td style="text-align:right;">
+77918432
+</td>
+<td style="text-align:right;">
+97324
+</td>
+<td style="text-align:left;">
+<ul>
+<li></td>
+<td style="text-align:left;">
+ENSG00000087884
+</td>
+<td style="text-align:left;">
+AAMDC
+</td>
+<td style="text-align:left;">
+protein_coding
+</td>
+<td style="text-align:left;">
+chromosome
+</td>
+<td style="text-align:left;">
+adipogenesis associated Mth938 domain containing [Source:HGNC Symbol;Acc:HGNC:30205]
+</td>
+<td style="text-align:left;">
+ENSG00000087884.14
+</td>
+<td style="text-align:left;">
+28971
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+AAMP
+</td>
+<td style="text-align:left;">
+AAMP
+</td>
+<td style="text-align:left;">
+2
+</td>
+<td style="text-align:right;">
+218264123
+</td>
+<td style="text-align:right;">
+218270257
+</td>
+<td style="text-align:right;">
+6135
+</td>
+<td style="text-align:left;">
+<ul>
+<li></td>
+<td style="text-align:left;">
+ENSG00000127837
+</td>
+<td style="text-align:left;">
+AAMP
+</td>
+<td style="text-align:left;">
+protein_coding
+</td>
+<td style="text-align:left;">
+chromosome
+</td>
+<td style="text-align:left;">
+angio associated migratory cell protein [Source:HGNC Symbol;Acc:HGNC:18]
+</td>
+<td style="text-align:left;">
+ENSG00000127837.9
+</td>
+<td style="text-align:left;">
+14
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+AANAT
+</td>
+<td style="text-align:left;">
+AANAT
+</td>
+<td style="text-align:left;">
+17
+</td>
+<td style="text-align:right;">
+76453351
+</td>
+<td style="text-align:right;">
+76470117
+</td>
+<td style="text-align:right;">
+16767
+</td>
+<td style="text-align:left;">
+<ul>
+<li></td>
+<td style="text-align:left;">
+ENSG00000129673
+</td>
+<td style="text-align:left;">
+AANAT
+</td>
+<td style="text-align:left;">
+protein_coding
+</td>
+<td style="text-align:left;">
+chromosome
+</td>
+<td style="text-align:left;">
+aralkylamine N-acetyltransferase [Source:HGNC Symbol;Acc:HGNC:19]
+</td>
+<td style="text-align:left;">
+ENSG00000129673.9
+</td>
+<td style="text-align:left;">
+15
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+AAR2
+</td>
+<td style="text-align:left;">
+AAR2
+</td>
+<td style="text-align:left;">
+20
+</td>
+<td style="text-align:right;">
+36236459
+</td>
+<td style="text-align:right;">
+36270918
+</td>
+<td style="text-align:right;">
+34460
+</td>
+<td style="text-align:left;">
+<ul>
+<li></td>
+<td style="text-align:left;">
+ENSG00000131043
+</td>
+<td style="text-align:left;">
+AAR2
+</td>
+<td style="text-align:left;">
+protein_coding
+</td>
+<td style="text-align:left;">
+chromosome
+</td>
+<td style="text-align:left;">
+AAR2 splicing factor [Source:HGNC Symbol;Acc:HGNC:15886]
+</td>
+<td style="text-align:left;">
+ENSG00000131043.12
+</td>
+<td style="text-align:left;">
+25980
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+AARD
+</td>
+<td style="text-align:left;">
+AARD
+</td>
+<td style="text-align:left;">
+8
+</td>
+<td style="text-align:right;">
+116938207
+</td>
+<td style="text-align:right;">
+116944487
+</td>
+<td style="text-align:right;">
+6281
+</td>
+<td style="text-align:left;">
+<ul>
+<li></td>
+<td style="text-align:left;">
+ENSG00000205002
+</td>
+<td style="text-align:left;">
+AARD
+</td>
+<td style="text-align:left;">
+protein_coding
+</td>
+<td style="text-align:left;">
+chromosome
+</td>
+<td style="text-align:left;">
+alanine and arginine rich domain containing protein [Source:HGNC Symbol;Acc:HGNC:33842]
+</td>
+<td style="text-align:left;">
+ENSG00000205002.4
+</td>
+<td style="text-align:left;">
+441376
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+AARS1
+</td>
+<td style="text-align:left;">
+AARS1
+</td>
+<td style="text-align:left;">
+16
+</td>
+<td style="text-align:right;">
+70252295
+</td>
+<td style="text-align:right;">
+70289543
+</td>
+<td style="text-align:right;">
+37249
+</td>
+<td style="text-align:left;">
+<ul>
+<li></td>
+<td style="text-align:left;">
+ENSG00000090861
+</td>
+<td style="text-align:left;">
+AARS1
+</td>
+<td style="text-align:left;">
+protein_coding
+</td>
+<td style="text-align:left;">
+chromosome
+</td>
+<td style="text-align:left;">
+alanyl-tRNA synthetase 1 [Source:HGNC Symbol;Acc:HGNC:20]
+</td>
+<td style="text-align:left;">
+ENSG00000090861.15
+</td>
+<td style="text-align:left;">
+16
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+AARS2
+</td>
+<td style="text-align:left;">
+AARS2
+</td>
+<td style="text-align:left;">
+6
+</td>
+<td style="text-align:right;">
+44298731
+</td>
+<td style="text-align:right;">
+44313347
+</td>
+<td style="text-align:right;">
+14617
+</td>
+<td style="text-align:left;">
+<ul>
+<li></td>
+<td style="text-align:left;">
+ENSG00000124608
+</td>
+<td style="text-align:left;">
+AARS2
+</td>
+<td style="text-align:left;">
+protein_coding
+</td>
+<td style="text-align:left;">
+chromosome
+</td>
+<td style="text-align:left;">
+alanyl-tRNA synthetase 2, mitochondrial [Source:HGNC Symbol;Acc:HGNC:21022]
+</td>
+<td style="text-align:left;">
+ENSG00000124608.5
+</td>
+<td style="text-align:left;">
+57505
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+AARSD1
+</td>
+<td style="text-align:left;">
+AARSD1
+</td>
+<td style="text-align:left;">
+17
+</td>
+<td style="text-align:right;">
+42950526
+</td>
+<td style="text-align:right;">
+42964498
+</td>
+<td style="text-align:right;">
+13973
+</td>
+<td style="text-align:left;">
+<ul>
+<li></td>
+<td style="text-align:left;">
+ENSG00000266967
+</td>
+<td style="text-align:left;">
+AARSD1
+</td>
+<td style="text-align:left;">
+protein_coding
+</td>
+<td style="text-align:left;">
+chromosome
+</td>
+<td style="text-align:left;">
+alanyl-tRNA synthetase domain containing 1 [Source:HGNC Symbol;Acc:HGNC:28417]
+</td>
+<td style="text-align:left;">
+ENSG00000266967.7
+</td>
+<td style="text-align:left;">
+80755
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+AASDH
+</td>
+<td style="text-align:left;">
+AASDH
+</td>
+<td style="text-align:left;">
+4
+</td>
+<td style="text-align:right;">
+56338287
+</td>
+<td style="text-align:right;">
+56387508
+</td>
+<td style="text-align:right;">
+49222
+</td>
+<td style="text-align:left;">
+<ul>
+<li></td>
+<td style="text-align:left;">
+ENSG00000157426
+</td>
+<td style="text-align:left;">
+AASDH
+</td>
+<td style="text-align:left;">
+protein_coding
+</td>
+<td style="text-align:left;">
+chromosome
+</td>
+<td style="text-align:left;">
+aminoadipate-semialdehyde dehydrogenase [Source:HGNC Symbol;Acc:HGNC:23993]
+</td>
+<td style="text-align:left;">
+ENSG00000157426.14
+</td>
+<td style="text-align:left;">
+132949
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+AASDHPPT
+</td>
+<td style="text-align:left;">
+AASDHPPT
+</td>
+<td style="text-align:left;">
+11
+</td>
+<td style="text-align:right;">
+106075501
+</td>
+<td style="text-align:right;">
+106098699
+</td>
+<td style="text-align:right;">
+23199
+</td>
+<td style="text-align:left;">
+<ul>
+<li></td>
+<td style="text-align:left;">
+ENSG00000149313
+</td>
+<td style="text-align:left;">
+AASDHPPT
+</td>
+<td style="text-align:left;">
+protein_coding
+</td>
+<td style="text-align:left;">
+chromosome
+</td>
+<td style="text-align:left;">
+aminoadipate-semialdehyde dehydrogenase-phosphopantetheinyl transferase [Source:HGNC Symbol;Acc:HGNC:14235]
+</td>
+<td style="text-align:left;">
+ENSG00000149313.11
+</td>
+<td style="text-align:left;">
+60496
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+AASS
+</td>
+<td style="text-align:left;">
+AASS
+</td>
+<td style="text-align:left;">
+7
+</td>
+<td style="text-align:right;">
+122073549
+</td>
+<td style="text-align:right;">
+122144255
+</td>
+<td style="text-align:right;">
+70707
+</td>
+<td style="text-align:left;">
+<ul>
+<li></td>
+<td style="text-align:left;">
+ENSG00000008311
+</td>
+<td style="text-align:left;">
+AASS
+</td>
+<td style="text-align:left;">
+protein_coding
+</td>
+<td style="text-align:left;">
+chromosome
+</td>
+<td style="text-align:left;">
+aminoadipate-semialdehyde synthase [Source:HGNC Symbol;Acc:HGNC:17366]
+</td>
+<td style="text-align:left;">
+ENSG00000008311.15
+</td>
+<td style="text-align:left;">
+10157
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+AATF
+</td>
+<td style="text-align:left;">
+AATF
+</td>
+<td style="text-align:left;">
+17
+</td>
+<td style="text-align:right;">
+36948954
+</td>
+<td style="text-align:right;">
+37056871
+</td>
+<td style="text-align:right;">
+107918
+</td>
+<td style="text-align:left;">
+<ul>
+<li></td>
+<td style="text-align:left;">
+ENSG00000275700
+</td>
+<td style="text-align:left;">
+AATF
+</td>
+<td style="text-align:left;">
+protein_coding
+</td>
+<td style="text-align:left;">
+chromosome
+</td>
+<td style="text-align:left;">
+apoptosis antagonizing transcription factor [Source:HGNC Symbol;Acc:HGNC:19235]
+</td>
+<td style="text-align:left;">
+ENSG00000275700.5
+</td>
+<td style="text-align:left;">
+26574
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+AATK
+</td>
+<td style="text-align:left;">
+AATK
+</td>
+<td style="text-align:left;">
+17
+</td>
+<td style="text-align:right;">
+81110487
+</td>
+<td style="text-align:right;">
+81166221
+</td>
+<td style="text-align:right;">
+55735
+</td>
+<td style="text-align:left;">
+<ul>
+<li></td>
+<td style="text-align:left;">
+ENSG00000181409
+</td>
+<td style="text-align:left;">
+AATK
+</td>
+<td style="text-align:left;">
+protein_coding
+</td>
+<td style="text-align:left;">
+chromosome
+</td>
+<td style="text-align:left;">
+apoptosis associated tyrosine kinase [Source:HGNC Symbol;Acc:HGNC:21]
+</td>
+<td style="text-align:left;">
+ENSG00000181409.14
+</td>
+<td style="text-align:left;">
+9625
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+ABAT
+</td>
+<td style="text-align:left;">
+ABAT
+</td>
+<td style="text-align:left;">
+16
+</td>
+<td style="text-align:right;">
+8674596
+</td>
+<td style="text-align:right;">
+8784575
+</td>
+<td style="text-align:right;">
+109980
+</td>
+<td style="text-align:left;">
+<ul>
+<li></td>
+<td style="text-align:left;">
+ENSG00000183044
+</td>
+<td style="text-align:left;">
+ABAT
+</td>
+<td style="text-align:left;">
+protein_coding
+</td>
+<td style="text-align:left;">
+chromosome
+</td>
+<td style="text-align:left;">
+4-aminobutyrate aminotransferase [Source:HGNC Symbol;Acc:HGNC:23]
+</td>
+<td style="text-align:left;">
+ENSG00000183044.12
+</td>
+<td style="text-align:left;">
+18
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+ABCA1
+</td>
+<td style="text-align:left;">
+ABCA1
+</td>
+<td style="text-align:left;">
+9
+</td>
+<td style="text-align:right;">
+104781006
+</td>
+<td style="text-align:right;">
+104928155
+</td>
+<td style="text-align:right;">
+147150
+</td>
+<td style="text-align:left;">
+<ul>
+<li></td>
+<td style="text-align:left;">
+ENSG00000165029
+</td>
+<td style="text-align:left;">
+ABCA1
+</td>
+<td style="text-align:left;">
+protein_coding
+</td>
+<td style="text-align:left;">
+chromosome
+</td>
+<td style="text-align:left;">
+ATP binding cassette subfamily A member 1 [Source:HGNC Symbol;Acc:HGNC:29]
+</td>
+<td style="text-align:left;">
+ENSG00000165029.16
+</td>
+<td style="text-align:left;">
+19
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+ABCA10
+</td>
+<td style="text-align:left;">
+ABCA10
+</td>
+<td style="text-align:left;">
+17
+</td>
+<td style="text-align:right;">
+69147214
+</td>
+<td style="text-align:right;">
+69244846
+</td>
+<td style="text-align:right;">
+97633
+</td>
+<td style="text-align:left;">
+<ul>
+<li></td>
+<td style="text-align:left;">
+ENSG00000154263
+</td>
+<td style="text-align:left;">
+ABCA10
+</td>
+<td style="text-align:left;">
+protein_coding
+</td>
+<td style="text-align:left;">
+chromosome
+</td>
+<td style="text-align:left;">
+ATP binding cassette subfamily A member 10 [Source:HGNC Symbol;Acc:HGNC:30]
+</td>
+<td style="text-align:left;">
+ENSG00000154263.17
+</td>
+<td style="text-align:left;">
+10349
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+ABCA11P
+</td>
+<td style="text-align:left;">
+ABCA11P
+</td>
+<td style="text-align:left;">
+4
+</td>
+<td style="text-align:right;">
+425435
+</td>
+<td style="text-align:right;">
+474129
+</td>
+<td style="text-align:right;">
+48695
+</td>
+<td style="text-align:left;">
+<ul>
+<li></td>
+<td style="text-align:left;">
+ENSG00000251595
+</td>
+<td style="text-align:left;">
+ABCA11P
+</td>
+<td style="text-align:left;">
+transcribed_processed_pseudogene
+</td>
+<td style="text-align:left;">
+chromosome
+</td>
+<td style="text-align:left;">
+ATP binding cassette subfamily A member 11, pseudogene [Source:HGNC Symbol;Acc:HGNC:31]
+</td>
+<td style="text-align:left;">
+ENSG00000251595.7
+</td>
+<td style="text-align:left;">
+NA
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+ABCA12
+</td>
+<td style="text-align:left;">
+ABCA12
+</td>
+<td style="text-align:left;">
+2
+</td>
+<td style="text-align:right;">
+214931542
+</td>
+<td style="text-align:right;">
+215138626
+</td>
+<td style="text-align:right;">
+207085
+</td>
+<td style="text-align:left;">
+<ul>
+<li></td>
+<td style="text-align:left;">
+ENSG00000144452
+</td>
+<td style="text-align:left;">
+ABCA12
+</td>
+<td style="text-align:left;">
+protein_coding
+</td>
+<td style="text-align:left;">
+chromosome
+</td>
+<td style="text-align:left;">
+ATP binding cassette subfamily A member 12 [Source:HGNC Symbol;Acc:HGNC:14637]
+</td>
+<td style="text-align:left;">
+ENSG00000144452.15
+</td>
+<td style="text-align:left;">
+26154
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+ABCA13
+</td>
+<td style="text-align:left;">
+ABCA13
+</td>
+<td style="text-align:left;">
+7
+</td>
+<td style="text-align:right;">
+48171458
+</td>
+<td style="text-align:right;">
+48647497
+</td>
+<td style="text-align:right;">
+476040
+</td>
+<td style="text-align:left;">
+<ul>
+<li></td>
+<td style="text-align:left;">
+ENSG00000179869
+</td>
+<td style="text-align:left;">
+ABCA13
+</td>
+<td style="text-align:left;">
+protein_coding
+</td>
+<td style="text-align:left;">
+chromosome
+</td>
+<td style="text-align:left;">
+ATP binding cassette subfamily A member 13 [Source:HGNC Symbol;Acc:HGNC:14638]
+</td>
+<td style="text-align:left;">
+ENSG00000179869.15
+</td>
+<td style="text-align:left;">
+154664
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+ABCA17P
+</td>
+<td style="text-align:left;">
+ABCA17P
+</td>
+<td style="text-align:left;">
+16
+</td>
+<td style="text-align:right;">
+2339150
+</td>
+<td style="text-align:right;">
+2426699
+</td>
+<td style="text-align:right;">
+87550
+</td>
+<td style="text-align:left;">
+<ul>
+<li></td>
+<td style="text-align:left;">
+ENSG00000238098
+</td>
+<td style="text-align:left;">
+ABCA17P
+</td>
+<td style="text-align:left;">
+transcribed_unitary_pseudogene
+</td>
+<td style="text-align:left;">
+chromosome
+</td>
+<td style="text-align:left;">
+ATP binding cassette subfamily A member 17, pseudogene [Source:HGNC Symbol;Acc:HGNC:32972]
+</td>
+<td style="text-align:left;">
+ENSG00000238098.9
+</td>
+<td style="text-align:left;">
+NA
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+ABCA2
+</td>
+<td style="text-align:left;">
+ABCA2
+</td>
+<td style="text-align:left;">
+9
+</td>
+<td style="text-align:right;">
+137007234
+</td>
+<td style="text-align:right;">
+137028922
+</td>
+<td style="text-align:right;">
+21689
+</td>
+<td style="text-align:left;">
+<ul>
+<li></td>
+<td style="text-align:left;">
+ENSG00000107331
+</td>
+<td style="text-align:left;">
+ABCA2
+</td>
+<td style="text-align:left;">
+protein_coding
+</td>
+<td style="text-align:left;">
+chromosome
+</td>
+<td style="text-align:left;">
+ATP binding cassette subfamily A member 2 [Source:HGNC Symbol;Acc:HGNC:32]
+</td>
+<td style="text-align:left;">
+ENSG00000107331.17
+</td>
+<td style="text-align:left;">
+20
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+ABCA3
+</td>
+<td style="text-align:left;">
+ABCA3
+</td>
+<td style="text-align:left;">
+16
+</td>
+<td style="text-align:right;">
+2275881
+</td>
+<td style="text-align:right;">
+2340746
+</td>
+<td style="text-align:right;">
+64866
+</td>
+<td style="text-align:left;">
+<ul>
+<li></td>
+<td style="text-align:left;">
+ENSG00000167972
+</td>
+<td style="text-align:left;">
+ABCA3
+</td>
+<td style="text-align:left;">
+protein_coding
+</td>
+<td style="text-align:left;">
+chromosome
+</td>
+<td style="text-align:left;">
+ATP binding cassette subfamily A member 3 [Source:HGNC Symbol;Acc:HGNC:33]
+</td>
+<td style="text-align:left;">
+ENSG00000167972.14
+</td>
+<td style="text-align:left;">
+21
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+ABCA4
+</td>
+<td style="text-align:left;">
+ABCA4
+</td>
+<td style="text-align:left;">
+1
+</td>
+<td style="text-align:right;">
+93992834
+</td>
+<td style="text-align:right;">
+94121148
+</td>
+<td style="text-align:right;">
+128315
+</td>
+<td style="text-align:left;">
+<ul>
+<li></td>
+<td style="text-align:left;">
+ENSG00000198691
+</td>
+<td style="text-align:left;">
+ABCA4
+</td>
+<td style="text-align:left;">
+protein_coding
+</td>
+<td style="text-align:left;">
+chromosome
+</td>
+<td style="text-align:left;">
+ATP binding cassette subfamily A member 4 [Source:HGNC Symbol;Acc:HGNC:34]
+</td>
+<td style="text-align:left;">
+ENSG00000198691.13
+</td>
+<td style="text-align:left;">
+24
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+ABCA5
+</td>
+<td style="text-align:left;">
+ABCA5
+</td>
+<td style="text-align:left;">
+17
+</td>
+<td style="text-align:right;">
+69244311
+</td>
+<td style="text-align:right;">
+69327244
+</td>
+<td style="text-align:right;">
+82934
+</td>
+<td style="text-align:left;">
+<ul>
+<li></td>
+<td style="text-align:left;">
+ENSG00000154265
+</td>
+<td style="text-align:left;">
+ABCA5
+</td>
+<td style="text-align:left;">
+protein_coding
+</td>
+<td style="text-align:left;">
+chromosome
+</td>
+<td style="text-align:left;">
+ATP binding cassette subfamily A member 5 [Source:HGNC Symbol;Acc:HGNC:35]
+</td>
+<td style="text-align:left;">
+ENSG00000154265.16
+</td>
+<td style="text-align:left;">
+23461
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+ABCA6
+</td>
+<td style="text-align:left;">
+ABCA6
+</td>
+<td style="text-align:left;">
+17
+</td>
+<td style="text-align:right;">
+69078702
+</td>
+<td style="text-align:right;">
+69141895
+</td>
+<td style="text-align:right;">
+63194
+</td>
+<td style="text-align:left;">
+<ul>
+<li></td>
+<td style="text-align:left;">
+ENSG00000154262
+</td>
+<td style="text-align:left;">
+ABCA6
+</td>
+<td style="text-align:left;">
+protein_coding
+</td>
+<td style="text-align:left;">
+chromosome
+</td>
+<td style="text-align:left;">
+ATP binding cassette subfamily A member 6 [Source:HGNC Symbol;Acc:HGNC:36]
+</td>
+<td style="text-align:left;">
+ENSG00000154262.13
+</td>
+<td style="text-align:left;">
+23460
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+ABCA7
+</td>
+<td style="text-align:left;">
+ABCA7
+</td>
+<td style="text-align:left;">
+19
+</td>
+<td style="text-align:right;">
+1039997
+</td>
+<td style="text-align:right;">
+1065572
+</td>
+<td style="text-align:right;">
+25576
+</td>
+<td style="text-align:left;">
+<ul>
+<li></td>
+<td style="text-align:left;">
+ENSG00000064687
+</td>
+<td style="text-align:left;">
+ABCA7
+</td>
+<td style="text-align:left;">
+protein_coding
+</td>
+<td style="text-align:left;">
+chromosome
+</td>
+<td style="text-align:left;">
+ATP binding cassette subfamily A member 7 [Source:HGNC Symbol;Acc:HGNC:37]
+</td>
+<td style="text-align:left;">
+ENSG00000064687.13
+</td>
+<td style="text-align:left;">
+10347
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+ABCA8
+</td>
+<td style="text-align:left;">
+ABCA8
+</td>
+<td style="text-align:left;">
+17
+</td>
+<td style="text-align:right;">
+68867289
+</td>
+<td style="text-align:right;">
+68955392
+</td>
+<td style="text-align:right;">
+88104
+</td>
+<td style="text-align:left;">
+<ul>
+<li></td>
+<td style="text-align:left;">
+ENSG00000141338
+</td>
+<td style="text-align:left;">
+ABCA8
+</td>
+<td style="text-align:left;">
+protein_coding
+</td>
+<td style="text-align:left;">
+chromosome
+</td>
+<td style="text-align:left;">
+ATP binding cassette subfamily A member 8 [Source:HGNC Symbol;Acc:HGNC:38]
+</td>
+<td style="text-align:left;">
+ENSG00000141338.14
+</td>
+<td style="text-align:left;">
+10351
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+ABCA9
+</td>
+<td style="text-align:left;">
+ABCA9
+</td>
+<td style="text-align:left;">
+17
+</td>
+<td style="text-align:right;">
+68974488
+</td>
+<td style="text-align:right;">
+69060949
+</td>
+<td style="text-align:right;">
+86462
+</td>
+<td style="text-align:left;">
+<ul>
+<li></td>
+<td style="text-align:left;">
+ENSG00000154258
+</td>
+<td style="text-align:left;">
+ABCA9
+</td>
+<td style="text-align:left;">
+protein_coding
+</td>
+<td style="text-align:left;">
+chromosome
+</td>
+<td style="text-align:left;">
+ATP binding cassette subfamily A member 9 [Source:HGNC Symbol;Acc:HGNC:39]
+</td>
+<td style="text-align:left;">
+ENSG00000154258.17
+</td>
+<td style="text-align:left;">
+10350
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+ABCB1
+</td>
+<td style="text-align:left;">
+ABCB1
+</td>
+<td style="text-align:left;">
+7
+</td>
+<td style="text-align:right;">
+87503017
+</td>
+<td style="text-align:right;">
+87713323
+</td>
+<td style="text-align:right;">
+210307
+</td>
+<td style="text-align:left;">
+<ul>
+<li></td>
+<td style="text-align:left;">
+ENSG00000085563
+</td>
+<td style="text-align:left;">
+ABCB1
+</td>
+<td style="text-align:left;">
+protein_coding
+</td>
+<td style="text-align:left;">
+chromosome
+</td>
+<td style="text-align:left;">
+ATP binding cassette subfamily B member 1 [Source:HGNC Symbol;Acc:HGNC:40]
+</td>
+<td style="text-align:left;">
+ENSG00000085563.15
+</td>
+<td style="text-align:left;">
+5243
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+ABCB10
+</td>
+<td style="text-align:left;">
+ABCB10
+</td>
+<td style="text-align:left;">
+1
+</td>
+<td style="text-align:right;">
+229516582
+</td>
+<td style="text-align:right;">
+229558707
+</td>
+<td style="text-align:right;">
+42126
+</td>
+<td style="text-align:left;">
+<ul>
+<li></td>
+<td style="text-align:left;">
+ENSG00000135776
+</td>
+<td style="text-align:left;">
+ABCB10
+</td>
+<td style="text-align:left;">
+protein_coding
+</td>
+<td style="text-align:left;">
+chromosome
+</td>
+<td style="text-align:left;">
+ATP binding cassette subfamily B member 10 [Source:HGNC Symbol;Acc:HGNC:41]
+</td>
+<td style="text-align:left;">
+ENSG00000135776.5
+</td>
+<td style="text-align:left;">
+23456
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+ABCB10P3
+</td>
+<td style="text-align:left;">
+ABCB10P3
+</td>
+<td style="text-align:left;">
+15
+</td>
+<td style="text-align:right;">
+28402868
+</td>
+<td style="text-align:right;">
+28405033
+</td>
+<td style="text-align:right;">
+2166
+</td>
+<td style="text-align:left;">
+<ul>
+<li></td>
+<td style="text-align:left;">
+ENSG00000261524
+</td>
+<td style="text-align:left;">
+ABCB10P3
+</td>
+<td style="text-align:left;">
+processed_pseudogene
+</td>
+<td style="text-align:left;">
+chromosome
+</td>
+<td style="text-align:left;">
+ABCB10 pseudogene 3 [Source:HGNC Symbol;Acc:HGNC:31129]
+</td>
+<td style="text-align:left;">
+ENSG00000261524.1
+</td>
+<td style="text-align:left;">
+NA
+</td>
+</tr>
+</tbody>
+</table>
+</div></li>
+</ul></li>
+</ul></li>
+</ul></li>
+</ul></li>
+</ul></li>
+</ul></li>
+</ul></li>
+</ul></li>
+</ul></li>
+</ul></li>
+</ul></li>
+</ul></li>
+</ul></li>
+</ul></li>
+</ul></li>
+</ul></li>
+</ul></li>
+</ul></li>
+</ul></li>
+</ul></li>
+</ul></li>
+</ul></li>
+</ul></li>
+</ul></li>
+</ul></li>
+</ul></li>
+</ul></li>
+</ul></li>
+</ul></li>
+</ul></li>
+</ul></li>
+</ul></li>
+</ul></li>
+</ul></li>
+</ul></li>
+</ul></li>
+</ul></li>
+</ul></li>
+</ul></li>
+</ul></li>
+</ul></li>
+</ul></li>
+</ul></li>
+</ul></li>
+</ul></li>
+</ul></li>
+</ul></li>
+</ul></li>
+</ul></li>
+<li><p>The columns of information about the genes include:</p>
+<ul>
+<li><strong>seqnames</strong>: Chromosome the gene is located on</li>
+<li><strong>start</strong>: Start coordinate</li>
+<li><strong>end</strong>: End coordinate</li>
+<li><strong>width</strong>: Length of gene (bp)</li>
+<li><strong>strand</strong> Strand the gene is located on</li>
+<li><strong>gene_id</strong>: Ensembl gene identifier</li>
+<li><strong>gene_name</strong>: Gene symbol</li>
+<li><strong>gene_biotype</strong>: Type of gene</li>
+<li><strong>seq_coord_system</strong>: Whether the gene is located on a chromosome or scaffold</li>
+<li><strong>description</strong>: Short description of the gene / what it encodes</li>
+<li><strong>gene_id_version</strong>: Version of the gene model in Ensembl</li>
+<li><strong>entrezid</strong>: Entrez gene identifier</li>
+</ul></li>
+<li><p>This information can help to put the differential gene expression analysis results in context later. For example, in some analyses, people may wish to focus on looking at particular <code>gene_biotype</code>s (e.g. protein-coding genes).</p></li>
+<li><p>By using the <code>table</code> function, we can count the number of genes belonging to each <code>gene_biotype</code> in this particular dataset.</p></li>
+</ul>
+<pre class="r"><code>genes$gene_biotype %&gt;%
+  table</code></pre>
+<pre><code>.
+                         IG_C_gene                    IG_C_pseudogene 
+                                14                                  9 
+                         IG_D_gene                          IG_J_gene 
+                                 8                                 18 
+                   IG_J_pseudogene                          IG_V_gene 
+                                 3                                153 
+                   IG_V_pseudogene                             lncRNA 
+                               165                                149 
+                          LRG_gene                              miRNA 
+                               143                                  1 
+            polymorphic_pseudogene               processed_pseudogene 
+                                35                               7259 
+                    protein_coding                         pseudogene 
+                             18761                                 21 
+                               TEC                          TR_C_gene 
+                                17                                  6 
+                         TR_J_gene                    TR_J_pseudogene 
+                                79                                  4 
+                         TR_V_gene                    TR_V_pseudogene 
+                               111                                 30 
+  transcribed_processed_pseudogene     transcribed_unitary_pseudogene 
+                               433                                 83 
+transcribed_unprocessed_pseudogene    translated_processed_pseudogene 
+                               729                                  1 
+ translated_unprocessed_pseudogene                 unitary_pseudogene 
+                                 1                                 50 
+            unprocessed_pseudogene 
+                              1639 </code></pre>
+<div id="questions-1" class="section level3">
+<h3>Questions</h3>
+<ol start="3" style="list-style-type: decimal">
+<li>What percentage of genes in this dataset are <code>protein_coding</code>?</li>
+</ol>
+</div>
+</div>
+<div id="create-dgelist-object" class="section level2">
+<h2>Create DGEList object</h2>
+<ul>
+<li><p>We will store the gene counts, sample information, and gene information in a <code>DGEList</code> (Digital Gene Expression) object called <code>dge</code>, which simplifies plotting and interacting with this information. It will also be used for the <a href="de.html">differential gene expression analysis</a> later on.</p></li>
+<li><p>The <code>DGEList</code> object is prepared as follows. Here, we remove all genes that have 0 counts across all samples, and apply Trimmed Mean of M-values (TMM) normalisation to normalise counts according to library size differences between samples.</p></li>
+</ul>
+<pre class="r"><code>dge &lt;- DGEList(counts = counts, 
+               genes = genes,
+               samples = samples,
+               remove.zeros = TRUE) %&gt;%  
+  calcNormFactors(&quot;TMM&quot;)</code></pre>
+<pre><code>Removing 883 rows with all zero counts</code></pre>
+<pre class="r"><code># Preview the DGEList object
+dge</code></pre>
+<pre><code>An object of class &quot;DGEList&quot;
+$counts
+      Healthy_1 Healthy_2 Healthy_3 Healthy_4 Healthy_5 Healthy_6 Healthy_7
+A1BG  133.14360 110.14223  94.68670  89.60004  85.81497  59.03335  77.18392
+A1CF    9.00000   8.00000   1.00000  10.00020   3.00000   6.00000   4.00000
+A2M    65.00001  31.72058  36.63567  19.22508  27.99998  40.60307  34.00003
+A2ML1  29.28124  26.30470  20.57935  13.00000   5.00000  39.47160   8.13204
+A2MP1 262.00034  83.00004  98.99997  55.99998  41.00000 124.99995  49.00002
+      Healthy_8 Healthy_9 Healthy_10 Covid19_1 Covid19_2 Covid19_3 Covid19_4
+A1BG   64.63351 118.31709   79.67834  83.26880 137.55230  68.16603  78.88510
+A1CF    5.00000   6.00000    0.00000  16.00040   5.00324  12.00600   6.00000
+A2M    31.56285  24.00001   28.00001  26.99995  38.00004  46.00000  21.99862
+A2ML1  20.04058  31.02818   51.08296  57.80256  30.37114  33.68818  22.34460
+A2MP1  56.99999  97.00004   45.00000   3.00000  56.00000  20.00000  22.00000
+      Covid19_5 Covid19_6 Covid19_7 Covid19_8 Covid19_9 Covid19_10 Covid19_11
+A1BG  114.23320  64.64760  53.95959 83.450900  74.57600   64.24903   92.80190
+A1CF   11.00000   8.00000   6.00013  2.999998   6.00000    4.00000    5.00007
+A2M    45.00001  67.00005  29.99999 25.999970  41.99999   39.00004   37.39638
+A2ML1  45.79115  21.32390  31.66436 37.455300  42.54337   28.32695   29.74667
+A2MP1  18.00004  22.99996  26.99999 44.000048  40.99998   25.00004  105.99995
+      Covid19_12 Covid19_13 Covid19_14 Covid19_15 Covid19_16 Covid19_17
+A1BG   59.465400   73.44665   47.97373   57.19031   64.57860   89.05430
+A1CF    3.000027    6.00187    6.00000    1.00107   10.00000    2.00727
+A2M    45.000016   30.00002   51.99996  129.00001   46.00005   84.00001
+A2ML1  16.849970   20.70310   30.61882   25.00652   29.80826   69.83409
+A2MP1  88.999980   56.00000   35.99997   12.00000   54.99995   14.00000
+      Covid19_18 Covid19_19 Covid19_20 Covid19_21 Covid19_22 Covid19_23
+A1BG    48.00094  79.154480   71.01173   50.83940   85.36085   93.90937
+A1CF    11.00000   8.003561   10.00780    3.00000    1.00000    5.00607
+A2M     60.49292  29.999997   48.00000   38.99996   27.00002   53.00000
+A2ML1   31.87888  33.128400   29.33900   21.56825   31.68098   13.08699
+A2MP1   38.00002  40.999970   18.00001    7.00000    6.00000   33.00003
+      Covid19_24 Covid19_25 Covid19_26 Covid19_27 Covid19_28 Covid19_29
+A1BG    73.99996   88.82890   75.26563   71.68710  124.19999   79.64403
+A1CF     5.00323    1.00124    5.00000    7.00000    6.00007    5.00369
+A2M     28.00001   99.99995   60.99995   47.99997   47.99996   73.00000
+A2ML1   67.26220   18.74255   44.07126   73.17947   16.01840   56.59880
+A2MP1   77.99996   33.00003   15.99998   12.99996   19.99999   14.00000
+      Covid19_30 Covid19_31 Covid19_32 Covid19_33 Covid19_34 Covid19_35
+A1BG    60.10780   64.65766   61.99567   71.27866   63.87714   54.11832
+A1CF     6.00000    7.00000   15.00040    3.00501    2.00048    6.00473
+A2M     17.25811   20.00000   32.99999   27.99999   28.99995   16.99998
+A2ML1   84.14297   29.39331   37.07064   19.60490   36.41428   33.22690
+A2MP1   26.00000   15.00000   11.00001   41.00004   12.00000    8.00000
+      Covid19_36 Covid19_37 Covid19_38 Covid19_39 Covid19_40 Covid19_41
+A1BG    61.43464   90.23180  116.96380  104.56376  134.22198   51.22791
+A1CF    13.00020    2.00002   13.00490    9.00014   16.00240    6.00000
+A2M     29.00002   57.00001   35.99996   57.00004   25.00001   62.99998
+A2ML1   54.13332   65.73852   75.60080   51.43706   66.83647   30.94580
+A2MP1   12.00000   29.99997   96.00001   29.99998   66.99996   20.99998
+      Covid19_42 Covid19_43 Covid19_44
+A1BG   71.184132   79.81150   78.14628
+A1CF    8.002895    5.00104    8.00000
+A2M    21.000028   12.00000   19.99997
+A2ML1  33.123070   38.82977   49.44860
+A2MP1   6.000000   14.99997   21.99996
+29297 more rows ...
+
+$samples
+            group lib.size norm.factors patient_code age sex geo_accession
+Healthy_1 Healthy 40594184     1.139493        507-V  53   M    GSM5218990
+Healthy_2 Healthy 36139025     1.127571       1189-V  57   F    GSM5218991
+Healthy_3 Healthy 29466261     1.180684       1406-V  61   M    GSM5218992
+Healthy_4 Healthy 33691447     1.080104       1918-V  56   M    GSM5218993
+Healthy_5 Healthy 33097717     1.012251       1951-V  57   F    GSM5218994
+             sample
+Healthy_1 Healthy_1
+Healthy_2 Healthy_2
+Healthy_3 Healthy_3
+Healthy_4 Healthy_4
+Healthy_5 Healthy_5
+49 more rows ...
+
+$genes
+       gene seqnames    start      end width strand         gene_id gene_name
+A1BG   A1BG       19 58345178 58353492  8315      - ENSG00000121410      A1BG
+A1CF   A1CF       10 50799409 50885675 86267      - ENSG00000148584      A1CF
+A2M     A2M       12  9067664  9116229 48566      - ENSG00000175899       A2M
+A2ML1 A2ML1       12  8822621  8887001 64381      + ENSG00000166535     A2ML1
+A2MP1 A2MP1       12  9228533  9275817 47285      - ENSG00000256069     A2MP1
+                            gene_biotype seq_coord_system
+A1BG                      protein_coding       chromosome
+A1CF                      protein_coding       chromosome
+A2M                       protein_coding       chromosome
+A2ML1                     protein_coding       chromosome
+A2MP1 transcribed_unprocessed_pseudogene       chromosome
+                                                             description
+A1BG              alpha-1-B glycoprotein [Source:HGNC Symbol;Acc:HGNC:5]
+A1CF  APOBEC1 complementation factor [Source:HGNC Symbol;Acc:HGNC:24086]
+A2M                alpha-2-macroglobulin [Source:HGNC Symbol;Acc:HGNC:7]
+A2ML1   alpha-2-macroglobulin like 1 [Source:HGNC Symbol;Acc:HGNC:23336]
+A2MP1 alpha-2-macroglobulin pseudogene 1 [Source:HGNC Symbol;Acc:HGNC:8]
+         gene_id_version entrezid
+A1BG  ENSG00000121410.12        1
+A1CF  ENSG00000148584.15    29974
+A2M   ENSG00000175899.14        2
+A2ML1 ENSG00000166535.20   144568
+A2MP1  ENSG00000256069.7       NA
+29297 more rows ...</code></pre>
+<ul>
+<li>The <code>counts</code>, <code>genes</code> or <code>samples</code> can be accessed from the <code>dge</code> object using the <code>$</code> operator. This is exactly the same information as that stored in the original <code>counts</code>, <code>samples</code> and <code>genes</code> objects, but putting them together in the <code>dge</code> object makes it easier to do certain plots/analysis later.</li>
+</ul>
+<pre class="r"><code># Preview first 5 rows and columns of the counts stored in `dge`:
+dge$counts[1:5, 1:5]</code></pre>
+<pre><code>      Healthy_1 Healthy_2 Healthy_3 Healthy_4 Healthy_5
+A1BG  133.14360 110.14223  94.68670  89.60004  85.81497
+A1CF    9.00000   8.00000   1.00000  10.00020   3.00000
+A2M    65.00001  31.72058  36.63567  19.22508  27.99998
+A2ML1  29.28124  26.30470  20.57935  13.00000   5.00000
+A2MP1 262.00034  83.00004  98.99997  55.99998  41.00000</code></pre>
+<pre class="r"><code># Preview first 5 rows and columns of the samples stored in `dge`:
+dge$samples[1:5, 1:5]</code></pre>
+<pre><code>            group lib.size norm.factors patient_code age
+Healthy_1 Healthy 40594184     1.139493        507-V  53
+Healthy_2 Healthy 36139025     1.127571       1189-V  57
+Healthy_3 Healthy 29466261     1.180684       1406-V  61
+Healthy_4 Healthy 33691447     1.080104       1918-V  56
+Healthy_5 Healthy 33097717     1.012251       1951-V  57</code></pre>
+<pre class="r"><code># Preview first 5 rows and columns of the genes stored in `dge`:
+dge$genes[1:5, 1:5]</code></pre>
+<pre><code>       gene seqnames    start      end width
+A1BG   A1BG       19 58345178 58353492  8315
+A1CF   A1CF       10 50799409 50885675 86267
+A2M     A2M       12  9067664  9116229 48566
+A2ML1 A2ML1       12  8822621  8887001 64381
+A2MP1 A2MP1       12  9228533  9275817 47285</code></pre>
+</div>
+<div id="quality-checks" class="section level2">
+<h2>Quality Checks</h2>
+<ul>
+<li>In this section we will do some basic quality checks to see if any samples are outliers or potentially mislabeled.</li>
+</ul>
+<div id="library-sizes-of-samples" class="section level3">
+<h3>Library Sizes of samples</h3>
+<ul>
+<li>Overall, the library sizes of samples are shown. Sometimes if there is an outlier sample with an abnormally large or small library size, it is worth keeping an eye on in case it is a failed sample (e.g. library prep went wrong). We can see that certain samples have a larger library size below, but overall they are quite comparable.</li>
+</ul>
+<pre class="r"><code>dge$samples %&gt;%
+  ggplot(aes(x = sample, y = lib.size, fill = group)) +
+  geom_bar(stat = &quot;identity&quot;) +
+  labs(y = &quot;Library size (total number of mapped and quantified reads)&quot;,
+       x = &quot;Sample&quot;, fill = &quot;Group&quot;) +
+  coord_flip() </code></pre>
+<p><img src="figure/processing.Rmd/libSizes-1.png" width="672" style="display: block; margin: auto;" /></p>
+</div>
+<div id="dimension-reduction" class="section level3">
+<h3>Dimension Reduction</h3>
+<div id="multi-dimensional-scaling-mds" class="section level4">
+<h4>Multi Dimensional Scaling (MDS)</h4>
+<ul>
+<li><p>Multi Dimensional Scaling (MDS) is a dimension reduction technique that summarises expression of the top 500 most variable genes expressed in each sample down to 2 dimensions, known as <code>Dimension 1</code> and <code>Dimension 2</code>. Dimension 1 represents the largest amount of variance that can be explained in the data. Plotting these principal components can help us visualise which samples show overall similar gene expression to each other – similar samples will be situated closer to each other on the plot.</p></li>
+<li><p>Because our information is stored in a <code>DGEList</code> type of object, we can make use of the <code>glMDSPlot</code> function from the <em>Glimma</em> package to make an interactive MDS plot. The MDS plot produced using the function below can be viewed by navigating to the <code>glimma-plots</code> directory and clicking on the MDS-Plot.html file, or by clicking <a href="assets/glimma-plots/MDS-Plot.html">here</a>.</p></li>
+</ul>
+<pre class="r"><code>glMDSPlot(dge, 
+          labels = dge$samples$sample,
+          groups = dge$samples$group)</code></pre>
+</div>
+<div id="principal-component-analysis-pca" class="section level4">
+<h4>Principal Component Analysis (PCA)</h4>
+<ul>
+<li><p>Principal component analysis (PCA) is similar to MDS, but it uses all genes (29302 genes for this particular dataset) to summarise down into a few principal components. Plotting these in the same way as for an MDS plot can also give us information about which samples are similar to each other. In most cases, the MDS and PCA plots will look very similar.</p></li>
+<li><p>Below, the PCA plot created using the <code>ggbiplot</code> function shows that overall, samples belonging to the same <code>group</code> tend to have similar gene expression patterns, and there is quite a large difference between <code>Healthy</code> and <code>Covid-19</code> samples. There do not appear to be any obvious outlier samples, although there is quite a bit of variation in gene expression amongst <code>Covid-19</code> samples.</p></li>
+<li><p>We will not remove any samples in this particular dataset as there is no indication so far that any of the samples are obvious outliers.</p></li>
+</ul>
+<pre class="r"><code># Perform PCA analysis:
+pca_analysis &lt;- prcomp(t(cpm(dge, log=TRUE)))
+summary(pca_analysis) </code></pre>
+<pre><code>Importance of components:
+                           PC1      PC2     PC3     PC4      PC5      PC6
+Standard deviation     54.2313 33.64178 30.5264 24.6467 22.04485 21.31052
+Proportion of Variance  0.2213  0.08514  0.0701  0.0457  0.03656  0.03416
+Cumulative Proportion   0.2213  0.30639  0.3765  0.4222  0.45875  0.49292
+                           PC7      PC8      PC9     PC10     PC11     PC12
+Standard deviation     18.1218 16.98897 16.60252 15.78163 15.01215 14.43417
+Proportion of Variance  0.0247  0.02171  0.02074  0.01874  0.01695  0.01567
+Cumulative Proportion   0.5176  0.53933  0.56007  0.57881  0.59576  0.61143
+                           PC13     PC14     PC15     PC16     PC17     PC18
+Standard deviation     14.21691 13.67726 13.32318 13.17782 12.95002 12.75765
+Proportion of Variance  0.01521  0.01407  0.01335  0.01306  0.01262  0.01224
+Cumulative Proportion   0.62664  0.64071  0.65407  0.66713  0.67975  0.69199
+                           PC19    PC20     PC21     PC22     PC23    PC24
+Standard deviation     12.58172 12.3644 12.16441 12.14183 12.05517 11.9261
+Proportion of Variance  0.01191  0.0115  0.01113  0.01109  0.01093  0.0107
+Cumulative Proportion   0.70390  0.7154  0.72653  0.73762  0.74855  0.7592
+                           PC25     PC26     PC27     PC28     PC29     PC30
+Standard deviation     11.65802 11.62907 11.57784 11.35174 11.28734 11.22792
+Proportion of Variance  0.01022  0.01017  0.01008  0.00969  0.00958  0.00948
+Cumulative Proportion   0.76948  0.77965  0.78974  0.79943  0.80901  0.81850
+                           PC31    PC32     PC33     PC34     PC35    PC36
+Standard deviation     11.13608 11.0569 10.95973 10.88569 10.71282 10.6322
+Proportion of Variance  0.00933  0.0092  0.00904  0.00891  0.00863  0.0085
+Cumulative Proportion   0.82783  0.8370  0.84606  0.85498  0.86361  0.8721
+                           PC37     PC38     PC39     PC40     PC41     PC42
+Standard deviation     10.58408 10.54698 10.51209 10.33571 10.27164 10.20218
+Proportion of Variance  0.00843  0.00837  0.00831  0.00804  0.00794  0.00783
+Cumulative Proportion   0.88054  0.88891  0.89722  0.90526  0.91320  0.92103
+                           PC43     PC44    PC45    PC46   PC47   PC48   PC49
+Standard deviation     10.15098 10.08666 10.0534 9.90851 9.8527 9.7849 9.6467
+Proportion of Variance  0.00775  0.00765  0.0076 0.00739 0.0073 0.0072 0.0070
+Cumulative Proportion   0.92878  0.93643  0.9440 0.95142 0.9587 0.9659 0.9729
+                          PC50    PC51    PC52   PC53      PC54
+Standard deviation     9.59333 9.52176 9.45986 9.3645 8.843e-14
+Proportion of Variance 0.00692 0.00682 0.00673 0.0066 0.000e+00
+Cumulative Proportion  0.97985 0.98667 0.99340 1.0000 1.000e+00</code></pre>
+<pre class="r"><code># Create the plot:
+pca_plot &lt;- ggbiplot::ggbiplot(pca_analysis, 
+                   groups = dge$samples$group, 
+                   ellipse = TRUE,
+                   var.axes = FALSE)
+
+pca_plot</code></pre>
+<p><img src="figure/processing.Rmd/pca-1.png" width="672" style="display: block; margin: auto;" /></p>
+<ul>
+<li><p>We also have other sample metadata including <code>age</code> and <code>sex</code> of the samples in the <code>dge$samples</code> table. These variables can also be plotted on the PCA plot by changing what is specified in the <code>groups</code> argument below, so that we can see whether samples are grouping by age or sex. Doing this is useful as it can tell us whether these variables are <a href="https://en.wikipedia.org/wiki/Confounding">confounding variables</a> that have the potential to obscure real biological effects.</p></li>
+<li><p>Below, we can see that the ages of patients from which samples were derived ranges from 51 to 61. It does appear that some of the older patients’ samples are closer to the top of the plot.</p></li>
+</ul>
+<pre class="r"><code>ggbiplot::ggbiplot(pca_analysis, 
+                   groups = dge$samples$age, 
+                   ellipse = FALSE,
+                   var.axes = FALSE)</code></pre>
+<p><img src="figure/processing.Rmd/unnamed-chunk-14-1.png" width="672" style="display: block; margin: auto;" /></p>
+<ul>
+<li>Below, we can see that <code>sex</code> of the samples does not seem to really influence where the points lie on the plot, suggesting that sex does not have a noticeable effect on gene expression of the samples here.</li>
+</ul>
+<pre class="r"><code>ggbiplot::ggbiplot(pca_analysis, 
+                   groups = dge$samples$sex, 
+                   ellipse = FALSE,
+                   var.axes = FALSE)</code></pre>
+<p><img src="figure/processing.Rmd/unnamed-chunk-15-1.png" width="672" style="display: block; margin: auto;" /></p>
+</div>
+</div>
+<div id="questions-2" class="section level3">
+<h3>Questions</h3>
+<ol start="4" style="list-style-type: decimal">
+<li>Should we treat male and female samples differently in the analysis, based on the information in the MDS/PCA plots?</li>
+<li>Should we do anything about the older patients’ samples, based on the information in the MDS/PCA plots?</li>
+</ol>
+</div>
+</div>
+<div id="next-step---differential-gene-expression-analysis" class="section level2">
+<h2>Next Step - Differential gene expression analysis</h2>
+<ul>
+<li><p>Overall the data quality looks good and there do not appear to be outlier samples or mislabeled samples.</p></li>
+<li><p>We will export the DGEList object created in this document for the next step of the analysis, <a href="de.html">differential gene expression analysis</a>. The <code>dge</code> object is exported into the <code>data/R</code> directory.</p></li>
+</ul>
+<pre class="r"><code>r.dir &lt;- here(&quot;data&quot;, &quot;R&quot;)
+
+ifelse(!dir.exists(r.dir),
+       dir.create(r.dir), 
+       FALSE)
+
+dge %&gt;% saveRDS(file.path(r.dir, &quot;dge.rds&quot;))</code></pre>
+<br>
+<p>
+<button type="button" class="btn btn-default btn-workflowr btn-workflowr-sessioninfo" data-toggle="collapse" data-target="#workflowr-sessioninfo" style="display: block;">
+<span class="glyphicon glyphicon-wrench" aria-hidden="true"></span> Session information
+</button>
+</p>
+<div id="workflowr-sessioninfo" class="collapse">
+<pre class="r"><code>sessionInfo()</code></pre>
+<pre><code>R version 4.0.3 (2020-10-10)
+Platform: x86_64-apple-darwin17.0 (64-bit)
+Running under: macOS Mojave 10.14.6
+
+Matrix products: default
+BLAS:   /Library/Frameworks/R.framework/Versions/4.0/Resources/lib/libRblas.dylib
+LAPACK: /Library/Frameworks/R.framework/Versions/4.0/Resources/lib/libRlapack.dylib
+
+locale:
+[1] en_AU.UTF-8/en_AU.UTF-8/en_AU.UTF-8/C/en_AU.UTF-8/en_AU.UTF-8
+
+attached base packages:
+[1] parallel  grid      stats     graphics  grDevices utils     datasets 
+[8] methods   base     
+
+other attached packages:
+ [1] Glimma_2.0.0         edgeR_3.32.1         limma_3.46.0        
+ [4] AnnotationHub_2.22.1 BiocFileCache_1.14.0 dbplyr_2.1.1        
+ [7] BiocGenerics_0.36.1  export_0.3.0         here_1.0.1          
+[10] ggrepel_0.9.1        ggbiplot_0.55        scales_1.1.1        
+[13] plyr_1.8.6           ggplot2_3.3.5        kableExtra_1.3.4    
+[16] reshape2_1.4.4       tibble_3.1.2         readr_1.4.0         
+[19] magrittr_2.0.1       dplyr_1.0.7          workflowr_1.6.2     
+
+loaded via a namespace (and not attached):
+  [1] uuid_0.1-4                    backports_1.2.1              
+  [3] systemfonts_1.0.2             splines_4.0.3                
+  [5] BiocParallel_1.24.1           crosstalk_1.1.1              
+  [7] GenomeInfoDb_1.26.7           digest_0.6.27                
+  [9] htmltools_0.5.1.1             fansi_0.5.0                  
+ [11] memoise_2.0.0                 openxlsx_4.2.4               
+ [13] annotate_1.68.0               extrafont_0.17               
+ [15] matrixStats_0.59.0            officer_0.3.18               
+ [17] extrafontdb_1.0               svglite_2.0.0                
+ [19] colorspace_2.0-2              blob_1.2.1                   
+ [21] rvest_1.0.0                   rappdirs_0.3.3               
+ [23] xfun_0.24                     crayon_1.4.1                 
+ [25] RCurl_1.98-1.3                jsonlite_1.7.2               
+ [27] genefilter_1.72.1             survival_3.2-7               
+ [29] glue_1.4.2                    rvg_0.2.5                    
+ [31] gtable_0.3.0                  zlibbioc_1.36.0              
+ [33] XVector_0.30.0                webshot_0.5.2                
+ [35] DelayedArray_0.16.3           Rttf2pt1_1.3.8               
+ [37] DBI_1.1.1                     miniUI_0.1.1.1               
+ [39] Rcpp_1.0.6                    viridisLite_0.4.0            
+ [41] xtable_1.8-4                  bit_4.0.4                    
+ [43] stats4_4.0.3                  htmlwidgets_1.5.3            
+ [45] httr_1.4.2                    RColorBrewer_1.1-2           
+ [47] ellipsis_0.3.2                farver_2.1.0                 
+ [49] XML_3.99-0.6                  pkgconfig_2.0.3              
+ [51] sass_0.4.0                    locfit_1.5-9.4               
+ [53] utf8_1.2.1                    labeling_0.4.2               
+ [55] tidyselect_1.1.1              rlang_0.4.11                 
+ [57] manipulateWidget_0.11.0       later_1.2.0                  
+ [59] AnnotationDbi_1.52.0          munsell_0.5.0                
+ [61] BiocVersion_3.12.0            tools_4.0.3                  
+ [63] cachem_1.0.5                  cli_2.5.0                    
+ [65] generics_0.1.0                RSQLite_2.2.7                
+ [67] devEMF_4.0-2                  broom_0.7.8                  
+ [69] evaluate_0.14                 stringr_1.4.0                
+ [71] fastmap_1.1.0                 yaml_2.2.1                   
+ [73] knitr_1.33                    bit64_4.0.5                  
+ [75] fs_1.5.0                      zip_2.2.0                    
+ [77] rgl_0.106.8                   purrr_0.3.4                  
+ [79] whisker_0.4                   mime_0.11                    
+ [81] xml2_1.3.2                    compiler_4.0.3               
+ [83] rstudioapi_0.13               curl_4.3.2                   
+ [85] interactiveDisplayBase_1.28.0 geneplotter_1.68.0           
+ [87] bslib_0.2.5.1                 stringi_1.6.2                
+ [89] highr_0.9                     gdtools_0.2.3                
+ [91] stargazer_5.2.2               lattice_0.20-41              
+ [93] Matrix_1.2-18                 vctrs_0.3.8                  
+ [95] pillar_1.6.1                  lifecycle_1.0.0              
+ [97] BiocManager_1.30.16           jquerylib_0.1.4              
+ [99] data.table_1.14.0             bitops_1.0-7                 
+[101] flextable_0.6.6               httpuv_1.6.1                 
+[103] GenomicRanges_1.42.0          R6_2.5.0                     
+[105] promises_1.2.0.1              IRanges_2.24.1               
+[107] assertthat_0.2.1              SummarizedExperiment_1.20.0  
+[109] DESeq2_1.30.1                 rprojroot_2.0.2              
+[111] withr_2.4.2                   S4Vectors_0.28.1             
+[113] GenomeInfoDbData_1.2.4        hms_1.1.0                    
+[115] tidyr_1.1.3                   rmarkdown_2.9                
+[117] MatrixGenerics_1.2.1          git2r_0.28.0                 
+[119] Biobase_2.50.0                shiny_1.6.0                  
+[121] base64enc_0.1-3              </code></pre>
+</div>
+</div>
+
+
+<!-- Adjust MathJax settings so that all math formulae are shown using
+TeX fonts only; see
+http://docs.mathjax.org/en/latest/configuration.html.  This will make
+the presentation more consistent at the cost of the webpage sometimes
+taking slightly longer to load. Note that this only works because the
+footer is added to webpages before the MathJax javascript. -->
+<script type="text/x-mathjax-config">
+  MathJax.Hub.Config({
+    "HTML-CSS": { availableFonts: ["TeX"] }
+  });
+</script>
+
+
+</div>
+</div>
+
+</div>
+
+<script>
+
+// add bootstrap table styles to pandoc tables
+function bootstrapStylePandocTables() {
+  $('tr.odd').parent('tbody').parent('table').addClass('table table-condensed');
+}
+$(document).ready(function () {
+  bootstrapStylePandocTables();
+});
+
+
+</script>
+
+<!-- tabsets -->
+
+<script>
+$(document).ready(function () {
+  window.buildTabsets("TOC");
+});
+
+$(document).ready(function () {
+  $('.tabset-dropdown > .nav-tabs > li').click(function () {
+    $(this).parent().toggleClass('nav-tabs-open');
+  });
+});
+</script>
+
+<!-- code folding -->
+
+<script>
+$(document).ready(function ()  {
+
+    // temporarily add toc-ignore selector to headers for the consistency with Pandoc
+    $('.unlisted.unnumbered').addClass('toc-ignore')
+
+    // move toc-ignore selectors from section div to header
+    $('div.section.toc-ignore')
+        .removeClass('toc-ignore')
+        .children('h1,h2,h3,h4,h5').addClass('toc-ignore');
+
+    // establish options
+    var options = {
+      selectors: "h1,h2,h3",
+      theme: "bootstrap3",
+      context: '.toc-content',
+      hashGenerator: function (text) {
+        return text.replace(/[.\\/?&!#<>]/g, '').replace(/\s/g, '_');
+      },
+      ignoreSelector: ".toc-ignore",
+      scrollTo: 0
+    };
+    options.showAndHide = true;
+    options.smoothScroll = true;
+
+    // tocify
+    var toc = $("#TOC").tocify(options).data("toc-tocify");
+});
+</script>
+
+<!-- dynamically load mathjax for compatibility with self-contained -->
+<script>
+  (function () {
+    var script = document.createElement("script");
+    script.type = "text/javascript";
+    script.src  = "https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML";
+    document.getElementsByTagName("head")[0].appendChild(script);
+  })();
+</script>
+
+</body>
+</html>
