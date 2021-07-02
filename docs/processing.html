@@ -376,7 +376,7 @@ div.tocify {
 <div class="tab-content">
 <div id="summary" class="tab-pane fade in active">
 <p>
-<strong>Last updated:</strong> 2021-06-30
+<strong>Last updated:</strong> 2021-07-02
 </p>
 <p>
 <strong>Checks:</strong> <span class="glyphicon glyphicon-ok text-success" aria-hidden="true"></span> 7 <span class="glyphicon glyphicon-exclamation-sign text-danger" aria-hidden="true"></span> 0
@@ -467,31 +467,37 @@ This reproducible <a href="http://rmarkdown.rstudio.com">R Markdown</a> analysis
 <div class="panel panel-default">
 <div class="panel-heading">
 <p class="panel-title">
-<a data-toggle="collapse" data-parent="#workflowr-checks" href="#strongRepositoryversionstrongahrefhttpsgithubcomnhihinBulkRNAseqtree1d1160f57f52beb2ca4aa9455b6d4ca0cc88c273targetblank1d1160fa"> <span class="glyphicon glyphicon-ok text-success" aria-hidden="true"></span> <strong>Repository version:</strong> <a href="https://github.com/nhihin/Bulk_RNAseq/tree/1d1160f57f52beb2ca4aa9455b6d4ca0cc88c273" target="_blank">1d1160f</a> </a>
+<a data-toggle="collapse" data-parent="#workflowr-checks" href="#strongRepositoryversionstrongahrefhttpsgithubcomnhihinBulkRNAseqtree9b94e39671358caa327763e921784b00badb5e32targetblank9b94e39a"> <span class="glyphicon glyphicon-ok text-success" aria-hidden="true"></span> <strong>Repository version:</strong> <a href="https://github.com/nhihin/Bulk_RNAseq/tree/9b94e39671358caa327763e921784b00badb5e32" target="_blank">9b94e39</a> </a>
 </p>
 </div>
-<div id="strongRepositoryversionstrongahrefhttpsgithubcomnhihinBulkRNAseqtree1d1160f57f52beb2ca4aa9455b6d4ca0cc88c273targetblank1d1160fa" class="panel-collapse collapse">
+<div id="strongRepositoryversionstrongahrefhttpsgithubcomnhihinBulkRNAseqtree9b94e39671358caa327763e921784b00badb5e32targetblank9b94e39a" class="panel-collapse collapse">
 <div class="panel-body">
 <p>
 Great! You are using Git for version control. Tracking code development and connecting the code version to the results is critical for reproducibility.
 </p>
 <p>
-The results in this page were generated with repository version <a href="https://github.com/nhihin/Bulk_RNAseq/tree/1d1160f57f52beb2ca4aa9455b6d4ca0cc88c273" target="_blank">1d1160f</a>. See the <em>Past versions</em> tab to see a history of the changes made to the R Markdown and HTML files.
+The results in this page were generated with repository version <a href="https://github.com/nhihin/Bulk_RNAseq/tree/9b94e39671358caa327763e921784b00badb5e32" target="_blank">9b94e39</a>. See the <em>Past versions</em> tab to see a history of the changes made to the R Markdown and HTML files.
 </p>
 <p>
 Note that you need to be careful to ensure that all relevant files for the analysis have been committed to Git prior to generating the results (you can use <code>wflow_publish</code> or <code>wflow_git_commit</code>). workflowr only checks the R Markdown file, but you know if there are other scripts or data files that it depends on. Below is the status of the Git repository when the results were generated:
 </p>
 <pre><code>
 Ignored files:
+    Ignored:    .DS_Store
+    Ignored:    .Rhistory
     Ignored:    .Rproj.user/
     Ignored:    analysis/.DS_Store
+    Ignored:    data/.DS_Store
+    Ignored:    output/.DS_Store
+    Ignored:    renv/library/
+    Ignored:    renv/local/
+    Ignored:    renv/staging/
 
 Untracked files:
-    Untracked:  data/
-    Untracked:  glimma-plots/
-    Untracked:  output/
-    Untracked:  renv.lock
-    Untracked:  renv/
+    Untracked:  code/
+
+Unstaged changes:
+    Modified:   output/GO_network.pdf
 
 </code></pre>
 <p>
@@ -530,6 +536,40 @@ Message
 </tr>
 </thead>
 <tbody>
+<tr>
+<td>
+Rmd
+</td>
+<td>
+<a href="https://github.com/nhihin/Bulk_RNAseq/blob/9b94e39671358caa327763e921784b00badb5e32/analysis/processing.Rmd" target="_blank">9b94e39</a>
+</td>
+<td>
+Nhi Hin
+</td>
+<td>
+2021-07-02
+</td>
+<td>
+wflow_publish("analysis/*.Rmd")
+</td>
+</tr>
+<tr>
+<td>
+html
+</td>
+<td>
+<a href="https://rawcdn.githack.com/nhihin/Bulk_RNAseq/f62ae4f2c989924e1ae2ded1e87b1f77efa89868/docs/processing.html" target="_blank">f62ae4f</a>
+</td>
+<td>
+Nhi Hin
+</td>
+<td>
+2021-06-30
+</td>
+<td>
+Build site.
+</td>
+</tr>
 <tr>
 <td>
 Rmd
@@ -579,6 +619,111 @@ The identification of COVID-19 patients with high-risk of severe disease is a ch
 <ul>
 <li>The data was pre-processed by the authors of the <a href="https://www.cell.com/iscience/pdf/S2589-0042(21)00679-9.pdf">Cell</a> paper, by aligning .fastq files to the human <code>hg18</code> transcriptome using <a href="https://www.ncbi.nlm.nih.gov/pmc/articles/PMC5600148/">Salmon</a>. We will not be covering the pre-processing in this workshop due to time constraints, although I would highly encourage those interested to bookmark the <a href="https://salmon.readthedocs.io/en/latest/salmon.html#using-salmon">Salmon documentation</a> which goes through the commands needed to run Salmon on .fastq files yourself.</li>
 </ul>
+</div>
+<div id="load-r-packages" class="section level2">
+<h2>Load R Packages</h2>
+<ul>
+<li>The following code chunk contains the R packages that are required to run through the analysis on this page:</li>
+</ul>
+<pre class="r"><code># Working with data:
+library(dplyr)</code></pre>
+<pre><code>
+Attaching package: &#39;dplyr&#39;</code></pre>
+<pre><code>The following objects are masked from &#39;package:stats&#39;:
+
+    filter, lag</code></pre>
+<pre><code>The following objects are masked from &#39;package:base&#39;:
+
+    intersect, setdiff, setequal, union</code></pre>
+<pre class="r"><code>library(magrittr)
+library(readr)
+library(tibble)
+library(reshape2)
+
+# Visualisation:
+library(kableExtra)</code></pre>
+<pre><code>
+Attaching package: &#39;kableExtra&#39;</code></pre>
+<pre><code>The following object is masked from &#39;package:dplyr&#39;:
+
+    group_rows</code></pre>
+<pre class="r"><code>library(ggplot2)
+library(ggbiplot)</code></pre>
+<pre><code>Loading required package: plyr</code></pre>
+<pre><code>------------------------------------------------------------------------------</code></pre>
+<pre><code>You have loaded plyr after dplyr - this is likely to cause problems.
+If you need functions from both plyr and dplyr, please load plyr first, then dplyr:
+library(plyr); library(dplyr)</code></pre>
+<pre><code>------------------------------------------------------------------------------</code></pre>
+<pre><code>
+Attaching package: &#39;plyr&#39;</code></pre>
+<pre><code>The following objects are masked from &#39;package:dplyr&#39;:
+
+    arrange, count, desc, failwith, id, mutate, rename, summarise,
+    summarize</code></pre>
+<pre><code>Loading required package: scales</code></pre>
+<pre><code>
+Attaching package: &#39;scales&#39;</code></pre>
+<pre><code>The following object is masked from &#39;package:readr&#39;:
+
+    col_factor</code></pre>
+<pre><code>Loading required package: grid</code></pre>
+<pre class="r"><code>library(ggrepel)
+library(grid)
+# Set ggplot theme
+theme_set(theme_bw())
+
+# Other packages:
+library(here)</code></pre>
+<pre><code>here() starts at /Users/nhi.hin/Projects/Bulk_RNAseq</code></pre>
+<pre><code>
+Attaching package: &#39;here&#39;</code></pre>
+<pre><code>The following object is masked from &#39;package:plyr&#39;:
+
+    here</code></pre>
+<pre class="r"><code>library(export)
+
+# Bioconductor packages:
+library(AnnotationHub)</code></pre>
+<pre><code>Loading required package: BiocGenerics</code></pre>
+<pre><code>Loading required package: parallel</code></pre>
+<pre><code>
+Attaching package: &#39;BiocGenerics&#39;</code></pre>
+<pre><code>The following objects are masked from &#39;package:parallel&#39;:
+
+    clusterApply, clusterApplyLB, clusterCall, clusterEvalQ,
+    clusterExport, clusterMap, parApply, parCapply, parLapply,
+    parLapplyLB, parRapply, parSapply, parSapplyLB</code></pre>
+<pre><code>The following objects are masked from &#39;package:dplyr&#39;:
+
+    combine, intersect, setdiff, union</code></pre>
+<pre><code>The following objects are masked from &#39;package:stats&#39;:
+
+    IQR, mad, sd, var, xtabs</code></pre>
+<pre><code>The following objects are masked from &#39;package:base&#39;:
+
+    anyDuplicated, append, as.data.frame, basename, cbind, colnames,
+    dirname, do.call, duplicated, eval, evalq, Filter, Find, get, grep,
+    grepl, intersect, is.unsorted, lapply, Map, mapply, match, mget,
+    order, paste, pmax, pmax.int, pmin, pmin.int, Position, rank,
+    rbind, Reduce, rownames, sapply, setdiff, sort, table, tapply,
+    union, unique, unsplit, which.max, which.min</code></pre>
+<pre><code>Loading required package: BiocFileCache</code></pre>
+<pre><code>Loading required package: dbplyr</code></pre>
+<pre><code>
+Attaching package: &#39;dbplyr&#39;</code></pre>
+<pre><code>The following objects are masked from &#39;package:dplyr&#39;:
+
+    ident, sql</code></pre>
+<pre class="r"><code>library(edgeR)</code></pre>
+<pre><code>Loading required package: limma</code></pre>
+<pre><code>
+Attaching package: &#39;limma&#39;</code></pre>
+<pre><code>The following object is masked from &#39;package:BiocGenerics&#39;:
+
+    plotMA</code></pre>
+<pre class="r"><code>library(limma)
+library(Glimma)</code></pre>
 </div>
 <div id="import-data" class="section level2">
 <h2>Import Data</h2>
@@ -5504,6 +5649,43 @@ A2MP1 A2MP1       12  9228533  9275817 47285</code></pre>
        x = &quot;Sample&quot;, fill = &quot;Group&quot;) +
   coord_flip() </code></pre>
 <p><img src="figure/processing.Rmd/libSizes-1.png" width="672" style="display: block; margin: auto;" /></p>
+<p>
+<button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-libSizes-1">
+Past versions of libSizes-1.png
+</button>
+</p>
+<div id="fig-libSizes-1" class="collapse">
+<div class="table-responsive">
+<table class="table table-condensed table-hover">
+<thead>
+<tr>
+<th>
+Version
+</th>
+<th>
+Author
+</th>
+<th>
+Date
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>
+<a href="https://github.com/nhihin/Bulk_RNAseq/blob/f62ae4f2c989924e1ae2ded1e87b1f77efa89868/docs/figure/processing.Rmd/libSizes-1.png" target="_blank">f62ae4f</a>
+</td>
+<td>
+Nhi Hin
+</td>
+<td>
+2021-06-30
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
 </div>
 <div id="dimension-reduction" class="section level3">
 <h3>Dimension Reduction</h3>
@@ -5572,6 +5754,43 @@ pca_plot &lt;- ggbiplot::ggbiplot(pca_analysis,
 
 pca_plot</code></pre>
 <p><img src="figure/processing.Rmd/pca-1.png" width="672" style="display: block; margin: auto;" /></p>
+<p>
+<button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-pca-1">
+Past versions of pca-1.png
+</button>
+</p>
+<div id="fig-pca-1" class="collapse">
+<div class="table-responsive">
+<table class="table table-condensed table-hover">
+<thead>
+<tr>
+<th>
+Version
+</th>
+<th>
+Author
+</th>
+<th>
+Date
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>
+<a href="https://github.com/nhihin/Bulk_RNAseq/blob/f62ae4f2c989924e1ae2ded1e87b1f77efa89868/docs/figure/processing.Rmd/pca-1.png" target="_blank">f62ae4f</a>
+</td>
+<td>
+Nhi Hin
+</td>
+<td>
+2021-06-30
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
 <ul>
 <li><p>We also have other sample metadata including <code>age</code> and <code>sex</code> of the samples in the <code>dge$samples</code> table. These variables can also be plotted on the PCA plot by changing what is specified in the <code>groups</code> argument below, so that we can see whether samples are grouping by age or sex. Doing this is useful as it can tell us whether these variables are <a href="https://en.wikipedia.org/wiki/Confounding">confounding variables</a> that have the potential to obscure real biological effects.</p></li>
 <li><p>Below, we can see that the ages of patients from which samples were derived ranges from 51 to 61. It does appear that some of the older patients’ samples are closer to the top of the plot.</p></li>
@@ -5580,7 +5799,44 @@ pca_plot</code></pre>
                    groups = dge$samples$age, 
                    ellipse = FALSE,
                    var.axes = FALSE)</code></pre>
-<p><img src="figure/processing.Rmd/unnamed-chunk-14-1.png" width="672" style="display: block; margin: auto;" /></p>
+<p><img src="figure/processing.Rmd/unnamed-chunk-15-1.png" width="672" style="display: block; margin: auto;" /></p>
+<p>
+<button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-unnamed-chunk-15-1">
+Past versions of unnamed-chunk-15-1.png
+</button>
+</p>
+<div id="fig-unnamed-chunk-15-1" class="collapse">
+<div class="table-responsive">
+<table class="table table-condensed table-hover">
+<thead>
+<tr>
+<th>
+Version
+</th>
+<th>
+Author
+</th>
+<th>
+Date
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>
+<a href="https://github.com/nhihin/Bulk_RNAseq/blob/f62ae4f2c989924e1ae2ded1e87b1f77efa89868/docs/figure/processing.Rmd/unnamed-chunk-15-1.png" target="_blank">f62ae4f</a>
+</td>
+<td>
+Nhi Hin
+</td>
+<td>
+2021-06-30
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
 <ul>
 <li>Below, we can see that <code>sex</code> of the samples does not seem to really influence where the points lie on the plot, suggesting that sex does not have a noticeable effect on gene expression of the samples here.</li>
 </ul>
@@ -5588,7 +5844,7 @@ pca_plot</code></pre>
                    groups = dge$samples$sex, 
                    ellipse = FALSE,
                    var.axes = FALSE)</code></pre>
-<p><img src="figure/processing.Rmd/unnamed-chunk-15-1.png" width="672" style="display: block; margin: auto;" /></p>
+<p><img src="figure/processing.Rmd/unnamed-chunk-16-1.png" width="672" style="display: block; margin: auto;" /></p>
 </div>
 </div>
 <div id="questions-2" class="section level3">
@@ -5636,76 +5892,73 @@ attached base packages:
 [8] methods   base     
 
 other attached packages:
- [1] Glimma_2.0.0         edgeR_3.32.1         limma_3.46.0        
- [4] AnnotationHub_2.22.1 BiocFileCache_1.14.0 dbplyr_2.1.1        
- [7] BiocGenerics_0.36.1  export_0.3.0         here_1.0.1          
-[10] ggrepel_0.9.1        ggbiplot_0.55        scales_1.1.1        
-[13] plyr_1.8.6           ggplot2_3.3.5        kableExtra_1.3.4    
-[16] reshape2_1.4.4       tibble_3.1.2         readr_1.4.0         
-[19] magrittr_2.0.1       dplyr_1.0.7          workflowr_1.6.2     
+ [1] Glimma_2.0.0         edgeR_3.32.0         limma_3.46.0        
+ [4] AnnotationHub_2.22.0 BiocFileCache_1.14.0 dbplyr_2.1.1        
+ [7] BiocGenerics_0.36.0  export_0.3.0         here_1.0.0          
+[10] ggrepel_0.8.2        ggbiplot_0.55        scales_1.1.1        
+[13] plyr_1.8.6           ggplot2_3.3.3        kableExtra_1.3.2    
+[16] reshape2_1.4.4       tibble_3.1.1         readr_1.4.0         
+[19] magrittr_2.0.1       dplyr_1.0.5          workflowr_1.6.2     
 
 loaded via a namespace (and not attached):
-  [1] uuid_0.1-4                    backports_1.2.1              
-  [3] systemfonts_1.0.2             splines_4.0.3                
-  [5] BiocParallel_1.24.1           crosstalk_1.1.1              
-  [7] GenomeInfoDb_1.26.7           digest_0.6.27                
-  [9] htmltools_0.5.1.1             fansi_0.5.0                  
- [11] memoise_2.0.0                 openxlsx_4.2.4               
- [13] annotate_1.68.0               extrafont_0.17               
- [15] matrixStats_0.59.0            officer_0.3.18               
- [17] extrafontdb_1.0               svglite_2.0.0                
- [19] colorspace_2.0-2              blob_1.2.1                   
- [21] rvest_1.0.0                   rappdirs_0.3.3               
- [23] xfun_0.24                     crayon_1.4.1                 
- [25] RCurl_1.98-1.3                jsonlite_1.7.2               
- [27] genefilter_1.72.1             survival_3.2-7               
- [29] glue_1.4.2                    rvg_0.2.5                    
- [31] gtable_0.3.0                  zlibbioc_1.36.0              
- [33] XVector_0.30.0                webshot_0.5.2                
- [35] DelayedArray_0.16.3           Rttf2pt1_1.3.8               
- [37] DBI_1.1.1                     miniUI_0.1.1.1               
- [39] Rcpp_1.0.6                    viridisLite_0.4.0            
- [41] xtable_1.8-4                  bit_4.0.4                    
- [43] stats4_4.0.3                  htmlwidgets_1.5.3            
- [45] httr_1.4.2                    RColorBrewer_1.1-2           
- [47] ellipsis_0.3.2                farver_2.1.0                 
- [49] XML_3.99-0.6                  pkgconfig_2.0.3              
- [51] sass_0.4.0                    locfit_1.5-9.4               
- [53] utf8_1.2.1                    labeling_0.4.2               
- [55] tidyselect_1.1.1              rlang_0.4.11                 
- [57] manipulateWidget_0.11.0       later_1.2.0                  
- [59] AnnotationDbi_1.52.0          munsell_0.5.0                
- [61] BiocVersion_3.12.0            tools_4.0.3                  
- [63] cachem_1.0.5                  cli_2.5.0                    
- [65] generics_0.1.0                RSQLite_2.2.7                
- [67] devEMF_4.0-2                  broom_0.7.8                  
- [69] evaluate_0.14                 stringr_1.4.0                
- [71] fastmap_1.1.0                 yaml_2.2.1                   
- [73] knitr_1.33                    bit64_4.0.5                  
- [75] fs_1.5.0                      zip_2.2.0                    
- [77] rgl_0.106.8                   purrr_0.3.4                  
- [79] whisker_0.4                   mime_0.11                    
- [81] xml2_1.3.2                    compiler_4.0.3               
- [83] rstudioapi_0.13               curl_4.3.2                   
- [85] interactiveDisplayBase_1.28.0 geneplotter_1.68.0           
- [87] bslib_0.2.5.1                 stringi_1.6.2                
- [89] highr_0.9                     gdtools_0.2.3                
- [91] stargazer_5.2.2               lattice_0.20-41              
- [93] Matrix_1.2-18                 vctrs_0.3.8                  
- [95] pillar_1.6.1                  lifecycle_1.0.0              
- [97] BiocManager_1.30.16           jquerylib_0.1.4              
- [99] data.table_1.14.0             bitops_1.0-7                 
-[101] flextable_0.6.6               httpuv_1.6.1                 
-[103] GenomicRanges_1.42.0          R6_2.5.0                     
-[105] promises_1.2.0.1              IRanges_2.24.1               
-[107] assertthat_0.2.1              SummarizedExperiment_1.20.0  
-[109] DESeq2_1.30.1                 rprojroot_2.0.2              
-[111] withr_2.4.2                   S4Vectors_0.28.1             
-[113] GenomeInfoDbData_1.2.4        hms_1.1.0                    
-[115] tidyr_1.1.3                   rmarkdown_2.9                
-[117] MatrixGenerics_1.2.1          git2r_0.28.0                 
-[119] Biobase_2.50.0                shiny_1.6.0                  
-[121] base64enc_0.1-3              </code></pre>
+  [1] uuid_0.1-4                    backports_1.2.0              
+  [3] systemfonts_0.3.2             splines_4.0.3                
+  [5] BiocParallel_1.24.1           crosstalk_1.1.0.1            
+  [7] GenomeInfoDb_1.26.1           digest_0.6.27                
+  [9] htmltools_0.5.1.1             fansi_0.4.1                  
+ [11] memoise_1.1.0                 openxlsx_4.2.3               
+ [13] annotate_1.68.0               matrixStats_0.57.0           
+ [15] officer_0.3.15                colorspace_2.0-0             
+ [17] blob_1.2.1                    rvest_1.0.0                  
+ [19] rappdirs_0.3.1                xfun_0.23                    
+ [21] crayon_1.4.1                  RCurl_1.98-1.2               
+ [23] jsonlite_1.7.2                genefilter_1.72.1            
+ [25] survival_3.2-7                glue_1.4.2                   
+ [27] rvg_0.2.5                     gtable_0.3.0                 
+ [29] zlibbioc_1.36.0               XVector_0.30.0               
+ [31] webshot_0.5.2                 DelayedArray_0.16.0          
+ [33] DBI_1.1.0                     miniUI_0.1.1.1               
+ [35] Rcpp_1.0.5                    viridisLite_0.3.0            
+ [37] xtable_1.8-4                  bit_4.0.4                    
+ [39] stats4_4.0.3                  htmlwidgets_1.5.2            
+ [41] httr_1.4.2                    RColorBrewer_1.1-2           
+ [43] ellipsis_0.3.1                farver_2.0.3                 
+ [45] pkgconfig_2.0.3               XML_3.99-0.5                 
+ [47] sass_0.3.1                    locfit_1.5-9.4               
+ [49] utf8_1.1.4                    labeling_0.4.2               
+ [51] tidyselect_1.1.0              rlang_0.4.10                 
+ [53] manipulateWidget_0.10.1       later_1.1.0.1                
+ [55] AnnotationDbi_1.52.0          munsell_0.5.0                
+ [57] BiocVersion_3.12.0            tools_4.0.3                  
+ [59] cli_2.5.0                     generics_0.1.0               
+ [61] RSQLite_2.2.1                 devEMF_4.0-2                 
+ [63] broom_0.7.6                   evaluate_0.14                
+ [65] stringr_1.4.0                 fastmap_1.0.1                
+ [67] yaml_2.2.1                    knitr_1.30                   
+ [69] bit64_4.0.5                   fs_1.5.0                     
+ [71] zip_2.1.1                     rgl_0.103.5                  
+ [73] purrr_0.3.4                   whisker_0.4                  
+ [75] mime_0.9                      xml2_1.3.2                   
+ [77] compiler_4.0.3                rstudioapi_0.13              
+ [79] curl_4.3                      interactiveDisplayBase_1.28.0
+ [81] geneplotter_1.68.0            bslib_0.2.4                  
+ [83] stringi_1.5.3                 highr_0.8                    
+ [85] gdtools_0.2.2                 stargazer_5.2.2              
+ [87] lattice_0.20-41               Matrix_1.2-18                
+ [89] vctrs_0.3.7                   pillar_1.6.0                 
+ [91] lifecycle_1.0.0               BiocManager_1.30.10          
+ [93] jquerylib_0.1.3               data.table_1.13.2            
+ [95] bitops_1.0-6                  flextable_0.6.1              
+ [97] httpuv_1.5.4                  GenomicRanges_1.42.0         
+ [99] R6_2.5.0                      promises_1.1.1               
+[101] IRanges_2.24.0                assertthat_0.2.1             
+[103] SummarizedExperiment_1.20.0   DESeq2_1.30.0                
+[105] rprojroot_2.0.2               withr_2.3.0                  
+[107] S4Vectors_0.28.0              GenomeInfoDbData_1.2.4       
+[109] hms_1.0.0                     tidyr_1.1.3                  
+[111] rmarkdown_2.8                 MatrixGenerics_1.2.0         
+[113] git2r_0.27.1                  Biobase_2.50.0               
+[115] shiny_1.6.0                   base64enc_0.1-3              </code></pre>
 </div>
 </div>
 
@@ -5759,9 +6012,6 @@ $(document).ready(function () {
 
 <script>
 $(document).ready(function ()  {
-
-    // temporarily add toc-ignore selector to headers for the consistency with Pandoc
-    $('.unlisted.unnumbered').addClass('toc-ignore')
 
     // move toc-ignore selectors from section div to header
     $('div.section.toc-ignore')

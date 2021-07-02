@@ -376,7 +376,7 @@ div.tocify {
 <div class="tab-content">
 <div id="summary" class="tab-pane fade in active">
 <p>
-<strong>Last updated:</strong> 2021-06-30
+<strong>Last updated:</strong> 2021-07-02
 </p>
 <p>
 <strong>Checks:</strong> <span class="glyphicon glyphicon-ok text-success" aria-hidden="true"></span> 7 <span class="glyphicon glyphicon-exclamation-sign text-danger" aria-hidden="true"></span> 0
@@ -467,31 +467,37 @@ This reproducible <a href="http://rmarkdown.rstudio.com">R Markdown</a> analysis
 <div class="panel panel-default">
 <div class="panel-heading">
 <p class="panel-title">
-<a data-toggle="collapse" data-parent="#workflowr-checks" href="#strongRepositoryversionstrongahrefhttpsgithubcomnhihinBulkRNAseqtree1d1160f57f52beb2ca4aa9455b6d4ca0cc88c273targetblank1d1160fa"> <span class="glyphicon glyphicon-ok text-success" aria-hidden="true"></span> <strong>Repository version:</strong> <a href="https://github.com/nhihin/Bulk_RNAseq/tree/1d1160f57f52beb2ca4aa9455b6d4ca0cc88c273" target="_blank">1d1160f</a> </a>
+<a data-toggle="collapse" data-parent="#workflowr-checks" href="#strongRepositoryversionstrongahrefhttpsgithubcomnhihinBulkRNAseqtree9b94e39671358caa327763e921784b00badb5e32targetblank9b94e39a"> <span class="glyphicon glyphicon-ok text-success" aria-hidden="true"></span> <strong>Repository version:</strong> <a href="https://github.com/nhihin/Bulk_RNAseq/tree/9b94e39671358caa327763e921784b00badb5e32" target="_blank">9b94e39</a> </a>
 </p>
 </div>
-<div id="strongRepositoryversionstrongahrefhttpsgithubcomnhihinBulkRNAseqtree1d1160f57f52beb2ca4aa9455b6d4ca0cc88c273targetblank1d1160fa" class="panel-collapse collapse">
+<div id="strongRepositoryversionstrongahrefhttpsgithubcomnhihinBulkRNAseqtree9b94e39671358caa327763e921784b00badb5e32targetblank9b94e39a" class="panel-collapse collapse">
 <div class="panel-body">
 <p>
 Great! You are using Git for version control. Tracking code development and connecting the code version to the results is critical for reproducibility.
 </p>
 <p>
-The results in this page were generated with repository version <a href="https://github.com/nhihin/Bulk_RNAseq/tree/1d1160f57f52beb2ca4aa9455b6d4ca0cc88c273" target="_blank">1d1160f</a>. See the <em>Past versions</em> tab to see a history of the changes made to the R Markdown and HTML files.
+The results in this page were generated with repository version <a href="https://github.com/nhihin/Bulk_RNAseq/tree/9b94e39671358caa327763e921784b00badb5e32" target="_blank">9b94e39</a>. See the <em>Past versions</em> tab to see a history of the changes made to the R Markdown and HTML files.
 </p>
 <p>
 Note that you need to be careful to ensure that all relevant files for the analysis have been committed to Git prior to generating the results (you can use <code>wflow_publish</code> or <code>wflow_git_commit</code>). workflowr only checks the R Markdown file, but you know if there are other scripts or data files that it depends on. Below is the status of the Git repository when the results were generated:
 </p>
 <pre><code>
 Ignored files:
+    Ignored:    .DS_Store
+    Ignored:    .Rhistory
     Ignored:    .Rproj.user/
     Ignored:    analysis/.DS_Store
+    Ignored:    data/.DS_Store
+    Ignored:    output/.DS_Store
+    Ignored:    renv/library/
+    Ignored:    renv/local/
+    Ignored:    renv/staging/
 
 Untracked files:
-    Untracked:  data/
-    Untracked:  glimma-plots/
-    Untracked:  output/
-    Untracked:  renv.lock
-    Untracked:  renv/
+    Untracked:  code/
+
+Unstaged changes:
+    Modified:   output/GO_network.pdf
 
 </code></pre>
 <p>
@@ -535,6 +541,40 @@ Message
 Rmd
 </td>
 <td>
+<a href="https://github.com/nhihin/Bulk_RNAseq/blob/9b94e39671358caa327763e921784b00badb5e32/analysis/de.Rmd" target="_blank">9b94e39</a>
+</td>
+<td>
+Nhi Hin
+</td>
+<td>
+2021-07-02
+</td>
+<td>
+wflow_publish("analysis/*.Rmd")
+</td>
+</tr>
+<tr>
+<td>
+html
+</td>
+<td>
+<a href="https://rawcdn.githack.com/nhihin/Bulk_RNAseq/f62ae4f2c989924e1ae2ded1e87b1f77efa89868/docs/de.html" target="_blank">f62ae4f</a>
+</td>
+<td>
+Nhi Hin
+</td>
+<td>
+2021-06-30
+</td>
+<td>
+Build site.
+</td>
+</tr>
+<tr>
+<td>
+Rmd
+</td>
+<td>
 <a href="https://github.com/nhihin/Bulk_RNAseq/blob/1d1160f57f52beb2ca4aa9455b6d4ca0cc88c273/analysis/de.Rmd" target="_blank">1d1160f</a>
 </td>
 <td>
@@ -566,6 +606,177 @@ wflow_publish("analysis/*.Rmd")
 <li><p>Visualisation of differentially expressed genes using volcano plots and boxplots.</p></li>
 <li><p>GO enrichment analysis of differentially expressed genes to explore their biological significance, including network plot visualisation.</p></li>
 </ol>
+</div>
+<div id="load-r-packages" class="section level2">
+<h2>Load R Packages</h2>
+<ul>
+<li>The following code chunk contains the R packages that are required to run through the analysis on this page:</li>
+</ul>
+<pre class="r"><code># Working with data:
+library(dplyr)</code></pre>
+<pre><code>
+Attaching package: &#39;dplyr&#39;</code></pre>
+<pre><code>The following objects are masked from &#39;package:stats&#39;:
+
+    filter, lag</code></pre>
+<pre><code>The following objects are masked from &#39;package:base&#39;:
+
+    intersect, setdiff, setequal, union</code></pre>
+<pre class="r"><code>library(magrittr)
+library(readr)
+library(tibble)
+library(reshape2)
+
+# Visualisation:
+library(kableExtra)</code></pre>
+<pre><code>
+Attaching package: &#39;kableExtra&#39;</code></pre>
+<pre><code>The following object is masked from &#39;package:dplyr&#39;:
+
+    group_rows</code></pre>
+<pre class="r"><code>library(ggplot2)
+library(ggbiplot)</code></pre>
+<pre><code>Loading required package: plyr</code></pre>
+<pre><code>------------------------------------------------------------------------------</code></pre>
+<pre><code>You have loaded plyr after dplyr - this is likely to cause problems.
+If you need functions from both plyr and dplyr, please load plyr first, then dplyr:
+library(plyr); library(dplyr)</code></pre>
+<pre><code>------------------------------------------------------------------------------</code></pre>
+<pre><code>
+Attaching package: &#39;plyr&#39;</code></pre>
+<pre><code>The following objects are masked from &#39;package:dplyr&#39;:
+
+    arrange, count, desc, failwith, id, mutate, rename, summarise,
+    summarize</code></pre>
+<pre><code>Loading required package: scales</code></pre>
+<pre><code>
+Attaching package: &#39;scales&#39;</code></pre>
+<pre><code>The following object is masked from &#39;package:readr&#39;:
+
+    col_factor</code></pre>
+<pre><code>Loading required package: grid</code></pre>
+<pre class="r"><code>library(ggrepel)
+library(grid)
+library(cowplot)
+# Set ggplot2 theme
+theme_set(theme_bw())
+
+# Other packages:
+library(here)</code></pre>
+<pre><code>here() starts at /Users/nhi.hin/Projects/Bulk_RNAseq</code></pre>
+<pre><code>
+Attaching package: &#39;here&#39;</code></pre>
+<pre><code>The following object is masked from &#39;package:plyr&#39;:
+
+    here</code></pre>
+<pre class="r"><code>library(export)
+
+# Bioconductor packages:
+library(AnnotationHub)</code></pre>
+<pre><code>Loading required package: BiocGenerics</code></pre>
+<pre><code>Loading required package: parallel</code></pre>
+<pre><code>
+Attaching package: &#39;BiocGenerics&#39;</code></pre>
+<pre><code>The following objects are masked from &#39;package:parallel&#39;:
+
+    clusterApply, clusterApplyLB, clusterCall, clusterEvalQ,
+    clusterExport, clusterMap, parApply, parCapply, parLapply,
+    parLapplyLB, parRapply, parSapply, parSapplyLB</code></pre>
+<pre><code>The following objects are masked from &#39;package:dplyr&#39;:
+
+    combine, intersect, setdiff, union</code></pre>
+<pre><code>The following objects are masked from &#39;package:stats&#39;:
+
+    IQR, mad, sd, var, xtabs</code></pre>
+<pre><code>The following objects are masked from &#39;package:base&#39;:
+
+    anyDuplicated, append, as.data.frame, basename, cbind, colnames,
+    dirname, do.call, duplicated, eval, evalq, Filter, Find, get, grep,
+    grepl, intersect, is.unsorted, lapply, Map, mapply, match, mget,
+    order, paste, pmax, pmax.int, pmin, pmin.int, Position, rank,
+    rbind, Reduce, rownames, sapply, setdiff, sort, table, tapply,
+    union, unique, unsplit, which.max, which.min</code></pre>
+<pre><code>Loading required package: BiocFileCache</code></pre>
+<pre><code>Loading required package: dbplyr</code></pre>
+<pre><code>
+Attaching package: &#39;dbplyr&#39;</code></pre>
+<pre><code>The following objects are masked from &#39;package:dplyr&#39;:
+
+    ident, sql</code></pre>
+<pre class="r"><code>library(edgeR)</code></pre>
+<pre><code>Loading required package: limma</code></pre>
+<pre><code>
+Attaching package: &#39;limma&#39;</code></pre>
+<pre><code>The following object is masked from &#39;package:BiocGenerics&#39;:
+
+    plotMA</code></pre>
+<pre class="r"><code>library(limma)
+library(Glimma)
+library(clusterProfiler)</code></pre>
+<pre><code></code></pre>
+<pre><code>clusterProfiler v3.18.1  For help: https://guangchuangyu.github.io/software/clusterProfiler
+
+If you use clusterProfiler in published research, please cite:
+Guangchuang Yu, Li-Gen Wang, Yanyan Han, Qing-Yu He. clusterProfiler: an R package for comparing biological themes among gene clusters. OMICS: A Journal of Integrative Biology. 2012, 16(5):284-287.</code></pre>
+<pre><code>
+Attaching package: &#39;clusterProfiler&#39;</code></pre>
+<pre><code>The following objects are masked from &#39;package:plyr&#39;:
+
+    arrange, mutate, rename, summarise</code></pre>
+<pre><code>The following object is masked from &#39;package:stats&#39;:
+
+    filter</code></pre>
+<pre class="r"><code>library(org.Hs.eg.db)</code></pre>
+<pre><code>Loading required package: AnnotationDbi</code></pre>
+<pre><code>Loading required package: stats4</code></pre>
+<pre><code>Loading required package: Biobase</code></pre>
+<pre><code>Welcome to Bioconductor
+
+    Vignettes contain introductory material; view with
+    &#39;browseVignettes()&#39;. To cite Bioconductor, see
+    &#39;citation(&quot;Biobase&quot;)&#39;, and for packages &#39;citation(&quot;pkgname&quot;)&#39;.</code></pre>
+<pre><code>
+Attaching package: &#39;Biobase&#39;</code></pre>
+<pre><code>The following object is masked from &#39;package:AnnotationHub&#39;:
+
+    cache</code></pre>
+<pre><code>Loading required package: IRanges</code></pre>
+<pre><code>Loading required package: S4Vectors</code></pre>
+<pre><code>
+Attaching package: &#39;S4Vectors&#39;</code></pre>
+<pre><code>The following object is masked from &#39;package:clusterProfiler&#39;:
+
+    rename</code></pre>
+<pre><code>The following object is masked from &#39;package:plyr&#39;:
+
+    rename</code></pre>
+<pre><code>The following objects are masked from &#39;package:dplyr&#39;:
+
+    first, rename</code></pre>
+<pre><code>The following object is masked from &#39;package:base&#39;:
+
+    expand.grid</code></pre>
+<pre><code>
+Attaching package: &#39;IRanges&#39;</code></pre>
+<pre><code>The following object is masked from &#39;package:clusterProfiler&#39;:
+
+    slice</code></pre>
+<pre><code>The following object is masked from &#39;package:plyr&#39;:
+
+    desc</code></pre>
+<pre><code>The following objects are masked from &#39;package:dplyr&#39;:
+
+    collapse, desc, slice</code></pre>
+<pre><code>
+Attaching package: &#39;AnnotationDbi&#39;</code></pre>
+<pre><code>The following object is masked from &#39;package:clusterProfiler&#39;:
+
+    select</code></pre>
+<pre><code>The following object is masked from &#39;package:dplyr&#39;:
+
+    select</code></pre>
+<pre><code></code></pre>
+<pre class="r"><code>library(enrichplot)</code></pre>
 </div>
 <div id="import-data" class="section level2">
 <h2>Import Data</h2>
@@ -650,6 +861,43 @@ afterFiltering_plot &lt;- dge %&gt;%
 
 cowplot::plot_grid(beforeFiltering_plot, afterFiltering_plot)</code></pre>
 <p><img src="figure/de.Rmd/unnamed-chunk-7-1.png" width="1056" style="display: block; margin: auto;" /></p>
+<p>
+<button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-unnamed-chunk-7-1">
+Past versions of unnamed-chunk-7-1.png
+</button>
+</p>
+<div id="fig-unnamed-chunk-7-1" class="collapse">
+<div class="table-responsive">
+<table class="table table-condensed table-hover">
+<thead>
+<tr>
+<th>
+Version
+</th>
+<th>
+Author
+</th>
+<th>
+Date
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>
+<a href="https://github.com/nhihin/Bulk_RNAseq/blob/f62ae4f2c989924e1ae2ded1e87b1f77efa89868/docs/figure/de.Rmd/unnamed-chunk-7-1.png" target="_blank">f62ae4f</a>
+</td>
+<td>
+Nhi Hin
+</td>
+<td>
+2021-06-30
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
 <ul>
 <li>Using this threshold, the step below filters out 15097 genes from the original 29302 genes, giving the remaining 14205 to be used in the analysis.</li>
 </ul>
@@ -748,6 +996,43 @@ attr(,&quot;contrasts&quot;)$group
 </ul>
 <pre class="r"><code>voomData &lt;- voom(dge, design = design, plot = TRUE)</code></pre>
 <p><img src="figure/de.Rmd/unnamed-chunk-11-1.png" width="672" style="display: block; margin: auto;" /></p>
+<p>
+<button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-unnamed-chunk-11-1">
+Past versions of unnamed-chunk-11-1.png
+</button>
+</p>
+<div id="fig-unnamed-chunk-11-1" class="collapse">
+<div class="table-responsive">
+<table class="table table-condensed table-hover">
+<thead>
+<tr>
+<th>
+Version
+</th>
+<th>
+Author
+</th>
+<th>
+Date
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>
+<a href="https://github.com/nhihin/Bulk_RNAseq/blob/f62ae4f2c989924e1ae2ded1e87b1f77efa89868/docs/figure/de.Rmd/unnamed-chunk-11-1.png" target="_blank">f62ae4f</a>
+</td>
+<td>
+Nhi Hin
+</td>
+<td>
+2021-06-30
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
 </div>
 <div id="define-comparison-contrast-of-interest" class="section level3">
 <h3>Define Comparison (Contrast) of interest</h3>
@@ -4081,6 +4366,43 @@ TRUE
 
 volcano_plot</code></pre>
 <p><img src="figure/de.Rmd/unnamed-chunk-20-1.png" width="672" style="display: block; margin: auto;" /></p>
+<p>
+<button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-unnamed-chunk-20-1">
+Past versions of unnamed-chunk-20-1.png
+</button>
+</p>
+<div id="fig-unnamed-chunk-20-1" class="collapse">
+<div class="table-responsive">
+<table class="table table-condensed table-hover">
+<thead>
+<tr>
+<th>
+Version
+</th>
+<th>
+Author
+</th>
+<th>
+Date
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>
+<a href="https://github.com/nhihin/Bulk_RNAseq/blob/f62ae4f2c989924e1ae2ded1e87b1f77efa89868/docs/figure/de.Rmd/unnamed-chunk-20-1.png" target="_blank">f62ae4f</a>
+</td>
+<td>
+Nhi Hin
+</td>
+<td>
+2021-06-30
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
 <pre class="r"><code>volcano_plot %&gt;% export::graph2pdf(here(&quot;output&quot;, &quot;volcano_plot.pdf&quot;))</code></pre>
 <pre><code>Exported graph as /Users/nhi.hin/Projects/Bulk_RNAseq/output/volcano_plot.pdf</code></pre>
 </div>
@@ -4139,6 +4461,43 @@ expressionOfCD177 %&gt;%
   theme(aspect.ratio = 1) +
   ggtitle(&quot;Expression of CD177 gene&quot;)</code></pre>
 <p><img src="figure/de.Rmd/unnamed-chunk-22-1.png" width="672" style="display: block; margin: auto;" /></p>
+<p>
+<button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-unnamed-chunk-22-1">
+Past versions of unnamed-chunk-22-1.png
+</button>
+</p>
+<div id="fig-unnamed-chunk-22-1" class="collapse">
+<div class="table-responsive">
+<table class="table table-condensed table-hover">
+<thead>
+<tr>
+<th>
+Version
+</th>
+<th>
+Author
+</th>
+<th>
+Date
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>
+<a href="https://github.com/nhihin/Bulk_RNAseq/blob/f62ae4f2c989924e1ae2ded1e87b1f77efa89868/docs/figure/de.Rmd/unnamed-chunk-22-1.png" target="_blank">f62ae4f</a>
+</td>
+<td>
+Nhi Hin
+</td>
+<td>
+2021-06-30
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
 </div>
 <div id="questions-3" class="section level4">
 <h4>Questions</h4>
@@ -4466,6 +4825,43 @@ MCM10/CDC6/CDC45/ORC1
            showCategory = nrow(GOresultsTable))
 GOnetwork_plot</code></pre>
 <p><img src="figure/de.Rmd/unnamed-chunk-26-1.png" width="1056" style="display: block; margin: auto;" /></p>
+<p>
+<button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-unnamed-chunk-26-1">
+Past versions of unnamed-chunk-26-1.png
+</button>
+</p>
+<div id="fig-unnamed-chunk-26-1" class="collapse">
+<div class="table-responsive">
+<table class="table table-condensed table-hover">
+<thead>
+<tr>
+<th>
+Version
+</th>
+<th>
+Author
+</th>
+<th>
+Date
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>
+<a href="https://github.com/nhihin/Bulk_RNAseq/blob/f62ae4f2c989924e1ae2ded1e87b1f77efa89868/docs/figure/de.Rmd/unnamed-chunk-26-1.png" target="_blank">f62ae4f</a>
+</td>
+<td>
+Nhi Hin
+</td>
+<td>
+2021-06-30
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
 <ul>
 <li>This network plot will be exported as a PDF into the <code>output</code> folder as follows:</li>
 </ul>
@@ -4496,86 +4892,83 @@ attached base packages:
 
 other attached packages:
  [1] enrichplot_1.10.2      org.Hs.eg.db_3.12.0    AnnotationDbi_1.52.0  
- [4] IRanges_2.24.1         S4Vectors_0.28.1       Biobase_2.50.0        
- [7] clusterProfiler_3.18.1 Glimma_2.0.0           edgeR_3.32.1          
-[10] limma_3.46.0           AnnotationHub_2.22.1   BiocFileCache_1.14.0  
-[13] dbplyr_2.1.1           BiocGenerics_0.36.1    export_0.3.0          
-[16] here_1.0.1             cowplot_1.1.1          ggrepel_0.9.1         
+ [4] IRanges_2.24.0         S4Vectors_0.28.0       Biobase_2.50.0        
+ [7] clusterProfiler_3.18.1 Glimma_2.0.0           edgeR_3.32.0          
+[10] limma_3.46.0           AnnotationHub_2.22.0   BiocFileCache_1.14.0  
+[13] dbplyr_2.1.1           BiocGenerics_0.36.0    export_0.3.0          
+[16] here_1.0.0             cowplot_1.1.0          ggrepel_0.8.2         
 [19] ggbiplot_0.55          scales_1.1.1           plyr_1.8.6            
-[22] ggplot2_3.3.5          kableExtra_1.3.4       reshape2_1.4.4        
-[25] tibble_3.1.2           readr_1.4.0            magrittr_2.0.1        
-[28] dplyr_1.0.7            workflowr_1.6.2       
+[22] ggplot2_3.3.3          kableExtra_1.3.2       reshape2_1.4.4        
+[25] tibble_3.1.1           readr_1.4.0            magrittr_2.0.1        
+[28] dplyr_1.0.5            workflowr_1.6.2       
 
 loaded via a namespace (and not attached):
-  [1] utf8_1.2.1                    tidyselect_1.1.1             
-  [3] RSQLite_2.2.7                 htmlwidgets_1.5.3            
-  [5] BiocParallel_1.24.1           scatterpie_0.1.6             
-  [7] munsell_0.5.0                 miniUI_0.1.1.1               
-  [9] withr_2.4.2                   colorspace_2.0-2             
- [11] GOSemSim_2.16.1               highr_0.9                    
- [13] knitr_1.33                    uuid_0.1-4                   
- [15] rstudioapi_0.13               officer_0.3.18               
- [17] DOSE_3.16.0                   Rttf2pt1_1.3.8               
- [19] MatrixGenerics_1.2.1          labeling_0.4.2               
- [21] git2r_0.28.0                  GenomeInfoDbData_1.2.4       
- [23] polyclip_1.10-0               bit64_4.0.5                  
- [25] farver_2.1.0                  rprojroot_2.0.2              
- [27] downloader_0.4                vctrs_0.3.8                  
- [29] generics_0.1.0                xfun_0.24                    
- [31] R6_2.5.0                      GenomeInfoDb_1.26.7          
- [33] graphlayouts_0.7.1            locfit_1.5-9.4               
- [35] manipulateWidget_0.11.0       bitops_1.0-7                 
- [37] cachem_1.0.5                  fgsea_1.16.0                 
- [39] DelayedArray_0.16.3           assertthat_0.2.1             
- [41] promises_1.2.0.1              ggraph_2.0.5                 
- [43] gtable_0.3.0                  tidygraph_1.2.0              
- [45] rlang_0.4.11                  genefilter_1.72.1            
- [47] systemfonts_1.0.2             splines_4.0.3                
- [49] extrafontdb_1.0               broom_0.7.8                  
- [51] BiocManager_1.30.16           rgl_0.106.8                  
- [53] yaml_2.2.1                    crosstalk_1.1.1              
- [55] backports_1.2.1               httpuv_1.6.1                 
- [57] qvalue_2.22.0                 extrafont_0.17               
- [59] tools_4.0.3                   ellipsis_0.3.2               
- [61] jquerylib_0.1.4               RColorBrewer_1.1-2           
- [63] stargazer_5.2.2               devEMF_4.0-2                 
- [65] Rcpp_1.0.6                    base64enc_0.1-3              
- [67] zlibbioc_1.36.0               purrr_0.3.4                  
- [69] RCurl_1.98-1.3                viridis_0.6.1                
- [71] SummarizedExperiment_1.20.0   fs_1.5.0                     
- [73] data.table_1.14.0             DO.db_2.9                    
- [75] openxlsx_4.2.4                flextable_0.6.6              
- [77] whisker_0.4                   ggnewscale_0.4.5             
- [79] matrixStats_0.59.0            hms_1.1.0                    
- [81] mime_0.11                     evaluate_0.14                
- [83] xtable_1.8-4                  XML_3.99-0.6                 
- [85] gridExtra_2.3                 compiler_4.0.3               
- [87] crayon_1.4.1                  shadowtext_0.0.8             
- [89] htmltools_0.5.1.1             later_1.2.0                  
- [91] tidyr_1.1.3                   geneplotter_1.68.0           
- [93] DBI_1.1.1                     tweenr_1.0.2                 
- [95] MASS_7.3-53                   rappdirs_0.3.3               
- [97] Matrix_1.2-18                 igraph_1.2.6                 
- [99] GenomicRanges_1.42.0          pkgconfig_2.0.3              
-[101] rvcheck_0.1.8                 xml2_1.3.2                   
-[103] svglite_2.0.0                 annotate_1.68.0              
-[105] bslib_0.2.5.1                 webshot_0.5.2                
-[107] XVector_0.30.0                rvg_0.2.5                    
-[109] rvest_1.0.0                   stringr_1.4.0                
-[111] digest_0.6.27                 rmarkdown_2.9                
-[113] fastmatch_1.1-0               gdtools_0.2.3                
-[115] curl_4.3.2                    shiny_1.6.0                  
-[117] lifecycle_1.0.0               jsonlite_1.7.2               
-[119] viridisLite_0.4.0             fansi_0.5.0                  
-[121] pillar_1.6.1                  lattice_0.20-41              
-[123] fastmap_1.1.0                 httr_1.4.2                   
-[125] survival_3.2-7                GO.db_3.12.1                 
-[127] interactiveDisplayBase_1.28.0 glue_1.4.2                   
-[129] zip_2.2.0                     BiocVersion_3.12.0           
-[131] bit_4.0.4                     ggforce_0.3.3                
-[133] stringi_1.6.2                 sass_0.4.0                   
-[135] blob_1.2.1                    DESeq2_1.30.1                
-[137] memoise_2.0.0                </code></pre>
+  [1] shadowtext_0.0.7              uuid_0.1-4                   
+  [3] backports_1.2.0               fastmatch_1.1-0              
+  [5] systemfonts_0.3.2             igraph_1.2.6                 
+  [7] splines_4.0.3                 BiocParallel_1.24.1          
+  [9] crosstalk_1.1.0.1             GenomeInfoDb_1.26.1          
+ [11] digest_0.6.27                 GOSemSim_2.16.1              
+ [13] htmltools_0.5.1.1             viridis_0.5.1                
+ [15] GO.db_3.12.1                  fansi_0.4.1                  
+ [17] memoise_1.1.0                 openxlsx_4.2.3               
+ [19] graphlayouts_0.7.1            annotate_1.68.0              
+ [21] matrixStats_0.57.0            officer_0.3.15               
+ [23] colorspace_2.0-0              blob_1.2.1                   
+ [25] rvest_1.0.0                   rappdirs_0.3.1               
+ [27] xfun_0.23                     crayon_1.4.1                 
+ [29] RCurl_1.98-1.2                jsonlite_1.7.2               
+ [31] scatterpie_0.1.5              genefilter_1.72.1            
+ [33] survival_3.2-7                glue_1.4.2                   
+ [35] polyclip_1.10-0               rvg_0.2.5                    
+ [37] gtable_0.3.0                  zlibbioc_1.36.0              
+ [39] XVector_0.30.0                webshot_0.5.2                
+ [41] DelayedArray_0.16.0           DOSE_3.16.0                  
+ [43] DBI_1.1.0                     miniUI_0.1.1.1               
+ [45] Rcpp_1.0.5                    viridisLite_0.3.0            
+ [47] xtable_1.8-4                  bit_4.0.4                    
+ [49] htmlwidgets_1.5.2             httr_1.4.2                   
+ [51] fgsea_1.16.0                  RColorBrewer_1.1-2           
+ [53] ellipsis_0.3.1                farver_2.0.3                 
+ [55] pkgconfig_2.0.3               XML_3.99-0.5                 
+ [57] sass_0.3.1                    locfit_1.5-9.4               
+ [59] utf8_1.1.4                    labeling_0.4.2               
+ [61] tidyselect_1.1.0              rlang_0.4.10                 
+ [63] manipulateWidget_0.10.1       later_1.1.0.1                
+ [65] munsell_0.5.0                 BiocVersion_3.12.0           
+ [67] tools_4.0.3                   downloader_0.4               
+ [69] generics_0.1.0                RSQLite_2.2.1                
+ [71] devEMF_4.0-2                  broom_0.7.6                  
+ [73] evaluate_0.14                 stringr_1.4.0                
+ [75] fastmap_1.0.1                 yaml_2.2.1                   
+ [77] knitr_1.30                    bit64_4.0.5                  
+ [79] fs_1.5.0                      tidygraph_1.2.0              
+ [81] zip_2.1.1                     rgl_0.103.5                  
+ [83] purrr_0.3.4                   ggraph_2.0.4                 
+ [85] whisker_0.4                   mime_0.9                     
+ [87] DO.db_2.9                     xml2_1.3.2                   
+ [89] compiler_4.0.3                rstudioapi_0.13              
+ [91] curl_4.3                      interactiveDisplayBase_1.28.0
+ [93] tweenr_1.0.1                  geneplotter_1.68.0           
+ [95] bslib_0.2.4                   stringi_1.5.3                
+ [97] highr_0.8                     gdtools_0.2.2                
+ [99] stargazer_5.2.2               lattice_0.20-41              
+[101] Matrix_1.2-18                 vctrs_0.3.7                  
+[103] pillar_1.6.0                  lifecycle_1.0.0              
+[105] BiocManager_1.30.10           jquerylib_0.1.3              
+[107] data.table_1.13.2             bitops_1.0-6                 
+[109] flextable_0.6.1               qvalue_2.22.0                
+[111] httpuv_1.5.4                  GenomicRanges_1.42.0         
+[113] R6_2.5.0                      promises_1.1.1               
+[115] gridExtra_2.3                 MASS_7.3-53                  
+[117] assertthat_0.2.1              SummarizedExperiment_1.20.0  
+[119] DESeq2_1.30.0                 rprojroot_2.0.2              
+[121] withr_2.3.0                   GenomeInfoDbData_1.2.4       
+[123] hms_1.0.0                     tidyr_1.1.3                  
+[125] rvcheck_0.1.8                 rmarkdown_2.8                
+[127] MatrixGenerics_1.2.0          ggnewscale_0.4.5             
+[129] git2r_0.27.1                  ggforce_0.3.2                
+[131] shiny_1.6.0                   base64enc_0.1-3              </code></pre>
 </div>
 </div>
 </div>
@@ -4630,9 +5023,6 @@ $(document).ready(function () {
 
 <script>
 $(document).ready(function ()  {
-
-    // temporarily add toc-ignore selector to headers for the consistency with Pandoc
-    $('.unlisted.unnumbered').addClass('toc-ignore')
 
     // move toc-ignore selectors from section div to header
     $('div.section.toc-ignore')
