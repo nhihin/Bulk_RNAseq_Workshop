@@ -23,7 +23,7 @@ install.packages("renv")
 
 3. In the RStudio Console, run the following lines of code to download and install all required packages using `renv`:
 
-```{r}
+```{r eval=FALSE}
 renv::restore(library = "./rlib/")
 .libPaths( c( .libPaths(), "./rlib") )
 ```
