@@ -7,8 +7,25 @@ editor_options:
   chunk_output_type: console
 ---
 
+## Summary
 
-```{r include=FALSE, warning=FALSE, error=FALSE}
+- On this page, we will perform differential gene expression analysis to identify genes that show significant differential expression between `Covid19` and `Healthy` samples. The steps involved are:
+
+1. Importing in the `DGEList` object prepared in the [Setting Up](processing.html) page. 
+
+2. Filtering of low expressed genes to increase our power to detect differentially expressed genes.
+
+3. Identifying differentially expressed genes using the *limma* package.
+
+4. Visualisation of differentially expressed genes using volcano plots and boxplots. 
+
+5. GO enrichment analysis of differentially expressed genes to explore their biological significance, including network plot visualisation. 
+
+## Load R Packages
+
+- The following code chunk contains the R packages that are required to run through the analysis on this page:
+
+```{r warning=FALSE, error=FALSE}
 # Working with data:
 library(dplyr)
 library(magrittr)
@@ -39,22 +56,6 @@ library(clusterProfiler)
 library(org.Hs.eg.db)
 library(enrichplot)
 ```
-
-
-
-## Summary
-
-- On this page, we will perform differential gene expression analysis to identify genes that show significant differential expression between `Covid19` and `Healthy` samples. The steps involved are:
-
-1. Importing in the `DGEList` object prepared in the [Setting Up](processing.html) page. 
-
-2. Filtering of low expressed genes to increase our power to detect differentially expressed genes.
-
-3. Identifying differentially expressed genes using the *limma* package.
-
-4. Visualisation of differentially expressed genes using volcano plots and boxplots. 
-
-5. GO enrichment analysis of differentially expressed genes to explore their biological significance, including network plot visualisation. 
 
 ## Import Data
 

@@ -9,3 +9,11 @@ editor_options:
 ---
 
 TBC
+
+## Instructions
+
+1. Download the zip file containing the analysis files by clicking [here]() and unzip the folder. 
+
+2. Navigate into the `analysis` folder, and click on the `de.Rmd` file to open the differential gene expression analysis in RStudio. 
+
+3. In the **Console** pane on RStudio, run the following code to install all required R packages: `renv::restore()`

@@ -7,8 +7,34 @@ editor_options:
   chunk_output_type: console
 ---
 
+## Summary
 
-```{r Load-Packages, include=FALSE, warning=FALSE, error=FALSE}
+- On this page, we will prepare the data for the differential gene expression analysis. This involves:
+
+1. Importing in the gene counts and sample metadata.
+2. Obtaining gene annotations for the genes detected in this experiment.
+3. Creating a `DGEList` object to store the gene counts, sample metadata, and gene annotations in a single object. 
+4. Dimension reduction to check how similar samples are, as well as whether there are any mislabeled samples. 
+5. Export out `DGEList` for use in the [differential gene expression analysis](de.html). 
+
+
+## Data Description
+
+- The dataset we will be using in this analysis comes from a recent study published in [Cell](https://www.cell.com/iscience/pdf/S2589-0042(21)00679-9.pdf). 
+
+- The data has been uploaded onto the public repository GEO with the [GSE171110](https://www.ncbi.nlm.nih.gov/geo/query/acc.cgi?acc=GSE171110) accession number, and I've copied the description of the data the authors gave there below:
+
+<blockquote>
+The identification of COVID-19 patients with high-risk of severe disease is a challenge in routine care. We performed blood RNA-seq gene expression analyses in severe hospitalized patients compared to healthy donors. Supervised and unsupervised analyses revealed a high abundance of CD177, a specific neutrophil activation marker, contributing to the clustering of severe patients. Gene abundance correlated with high serum levels of CD177 in severe patients. These results highlight neutrophil activation as a hallmark of severe disease and CD177 assessment as a reliable prognostic marker for routine care.
+</blockquote>
+
+- The data was pre-processed by the authors of the [Cell](https://www.cell.com/iscience/pdf/S2589-0042(21)00679-9.pdf) paper, by aligning .fastq files to the human `hg18` transcriptome using [Salmon](https://www.ncbi.nlm.nih.gov/pmc/articles/PMC5600148/). We will not be covering the pre-processing in this workshop due to time constraints, although I would highly encourage those interested to bookmark the [Salmon documentation](https://salmon.readthedocs.io/en/latest/salmon.html#using-salmon) which goes through the commands needed to run Salmon on .fastq files yourself.
+
+## Load R Packages
+
+- The following code chunk contains the R packages that are required to run through the analysis on this page:
+
+```{r warning=FALSE, error=FALSE}
 # Working with data:
 library(dplyr)
 library(magrittr)
@@ -36,28 +62,6 @@ library(limma)
 library(Glimma)
 ```
 
-## Summary
-
-- On this page, we will prepare the data for the differential gene expression analysis. This involves:
-
-1. Importing in the gene counts and sample metadata.
-2. Obtaining gene annotations for the genes detected in this experiment.
-3. Creating a `DGEList` object to store the gene counts, sample metadata, and gene annotations in a single object. 
-4. Dimension reduction to check how similar samples are, as well as whether there are any mislabeled samples. 
-5. Export out `DGEList` for use in the [differential gene expression analysis](de.html). 
-
-
-## Data Description
-
-- The dataset we will be using in this analysis comes from a recent study published in [Cell](https://www.cell.com/iscience/pdf/S2589-0042(21)00679-9.pdf). 
-
-- The data has been uploaded onto the public repository GEO with the [GSE171110](https://www.ncbi.nlm.nih.gov/geo/query/acc.cgi?acc=GSE171110) accession number, and I've copied the description of the data the authors gave there below:
-
-<blockquote>
-The identification of COVID-19 patients with high-risk of severe disease is a challenge in routine care. We performed blood RNA-seq gene expression analyses in severe hospitalized patients compared to healthy donors. Supervised and unsupervised analyses revealed a high abundance of CD177, a specific neutrophil activation marker, contributing to the clustering of severe patients. Gene abundance correlated with high serum levels of CD177 in severe patients. These results highlight neutrophil activation as a hallmark of severe disease and CD177 assessment as a reliable prognostic marker for routine care.
-</blockquote>
-
-- The data was pre-processed by the authors of the [Cell](https://www.cell.com/iscience/pdf/S2589-0042(21)00679-9.pdf) paper, by aligning .fastq files to the human `hg18` transcriptome using [Salmon](https://www.ncbi.nlm.nih.gov/pmc/articles/PMC5600148/). We will not be covering the pre-processing in this workshop due to time constraints, although I would highly encourage those interested to bookmark the [Salmon documentation](https://salmon.readthedocs.io/en/latest/salmon.html#using-salmon) which goes through the commands needed to run Salmon on .fastq files yourself.
 
 ## Import Data
 
