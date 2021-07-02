@@ -34,7 +34,7 @@ The identification of COVID-19 patients with high-risk of severe disease is a ch
 
 - The following code chunk contains the R packages that are required to run through the analysis on this page:
 
-```{r warning=FALSE, error=FALSE}
+```{r message=FALSE, warning=FALSE, error=FALSE}
 # Working with data:
 library(dplyr)
 library(magrittr)

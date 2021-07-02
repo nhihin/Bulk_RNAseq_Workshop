@@ -8,8 +8,6 @@ editor_options:
   chunk_output_type: console
 ---
 
-TBC
-
 ## Instructions
 
 1. Download the zip file containing the analysis files by clicking [here]() and unzip the folder. 
