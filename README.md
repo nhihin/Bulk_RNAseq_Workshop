@@ -9,8 +9,9 @@
 install.packages("renv")
 ```
 
-2. Download the workshop material by clicking [here](https://github.com/nhihin/Bulk_RNAseq/archive/refs/heads/master.zip) and unzip the folder. 
-
+2. Download the workshop material by clicking [here](https://github.com/sagc-bioinformatics/Bulk_RNAseq/archive/refs/heads/master.zip) and unzip the folder. 
+  
+  - Open the `Bulk_RNAseq.Rproj` file to open the R Project in RStudio. 
   - Navigate to the `analysis` folder, and click the `de.Rmd` file to open up the analysis in RStudio. 
   - Also, navigate to the `docs` folder, and click on the `de.html` file to open up the analysis documentation in a web browser.
 
@@ -21,4 +22,4 @@ renv::restore(library = "./rlib/")
 .libPaths( c( .libPaths(), "./rlib") )
 ```
 
-4. You are to start running through the workshop material! 
+4. You are ready to start running through the workshop material! 
