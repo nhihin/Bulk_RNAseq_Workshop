@@ -29,4 +29,4 @@ renv::restore(library = "./rlib/")
 .libPaths( c( .libPaths(), "./rlib") )
 ```
 
-4. You are to start running through the workshop material! 
+4. You are ready to start running through the workshop material! 
