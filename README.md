@@ -1,6 +1,6 @@
 # Bulk RNA-seq Workshop
 
-View the workshop material here: [https://nhihin.com/Bulk_RNAseq/](https://nhihin.com/Bulk_RNAseq/)
+View the workshop material here: [https://nhihin.com/Bulk_RNAseq_Workshop](https://nhihin.com/Bulk_RNAseq_Workshop)
 
 ## Instructions
 
